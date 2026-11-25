@@ -16,6 +16,7 @@ const {
   listInstallProfiles,
   listSupportedLocales,
   resolveInstallPlan,
+  resolveLegacyCompatibilitySelection,
   validateInstallModuleIds,
   LOCALE_ALIAS_TO_COMPONENT_ID,
 } = require('../../scripts/lib/install-manifests');
@@ -281,6 +282,62 @@ function runTests() {
     );
   })) passed++; else failed++;
 
+  if (test('resolves legacy compatibility selections into manifest module IDs', () => {
+    const selection = resolveLegacyCompatibilitySelection({
+      target: 'claude-project',
+      legacyLanguages: ['typescript', 'go', 'golang'],
+    });
+
+    assert.deepStrictEqual(selection.legacyLanguages, ['typescript', 'go', 'golang']);
+    assert.ok(selection.moduleIds.includes('rules-core'));
+    assert.ok(selection.moduleIds.includes('agents-core'));
+    assert.ok(selection.moduleIds.includes('commands-core'));
+    assert.ok(selection.moduleIds.includes('hooks-runtime'));
+    assert.ok(selection.moduleIds.includes('platform-configs'));
+    assert.ok(selection.moduleIds.includes('workflow-quality'));
+    assert.ok(selection.moduleIds.includes('framework-language'));
+  })) passed++; else failed++;
+
+  if (test('resolves rust legacy compatibility into framework-language module', () => {
+    const selection = resolveLegacyCompatibilitySelection({
+      target: 'claude-project',
+      legacyLanguages: ['rust'],
+    });
+
+    assert.ok(selection.moduleIds.includes('rules-core'));
+    assert.ok(selection.moduleIds.includes('framework-language'),
+      'rust should resolve to framework-language module');
+  })) passed++; else failed++;
+
+  if (test('rejects unknown legacy compatibility languages', () => {
+    assert.throws(
+      () => resolveLegacyCompatibilitySelection({
+        target: 'claude-project',
+        legacyLanguages: ['brainfuck'],
+      }),
+      /Unknown legacy language: brainfuck/
+    );
+    assert.throws(
+      () => resolveLegacyCompatibilitySelection({
+        legacyLanguages: [],
+      }),
+      /No legacy languages were provided/
+    );
+    assert.throws(
+      () => resolveLegacyCompatibilitySelection({
+        target: 'not-a-target',
+        legacyLanguages: ['typescript'],
+      }),
+      /Unknown install target: not-a-target/
+    );
+    assert.throws(
+      () => resolveLegacyCompatibilitySelection({
+        legacyLanguages: ['brainfuck', 'whitespace'],
+      }),
+      /Unknown legacy languages: brainfuck, whitespace/
+    );
+  })) passed++; else failed++;
+
   if (test('resolves included and excluded user-facing components', () => {
     const plan = resolveInstallPlan({
       profileId: 'core',
@@ -371,6 +428,130 @@ function runTests() {
         }),
         /Selection excludes every requested install module/
       );
+    } finally {
+      cleanupTestRepo(repoRoot);
+    }
+  })) passed++; else failed++;
+
+  if (test('validates projectRoot and homeDir option types before adapter planning', () => {
+    assert.throws(
+      () => resolveInstallPlan({ profileId: 'core', target: 'claude-project', projectRoot: 42 }),
+      /projectRoot must be a non-empty string when provided/
+    );
+    assert.throws(
+      () => resolveInstallPlan({ profileId: 'core', target: 'claude', homeDir: {} }),
+      /homeDir must be a non-empty string when provided/
+    );
+  })) passed++; else failed++;
+
+  if (test('skips required unsupported dependencies but permits explicitly optional ones', () => {
+    const repoRoot = createTestRepo();
+    try {
+      writeJson(path.join(repoRoot, 'manifests', 'install-modules.json'), {
+        version: 1,
+        modules: [
+          {
+            id: 'parent',
+            kind: 'skills',
+            description: 'Parent',
+            paths: ['parent'],
+            targets: ['claude'],
+            dependencies: ['child'],
+            defaultInstall: false,
+            cost: 'light',
+            stability: 'stable'
+          },
+          {
+            id: 'child',
+            kind: 'skills',
+            description: 'Child',
+            paths: ['child'],
+            targets: ['codex'],
+            dependencies: [],
+            defaultInstall: false,
+            cost: 'light',
+            stability: 'stable'
+          }
+        ]
+      });
+      writeJson(path.join(repoRoot, 'manifests', 'install-profiles.json'), {
+        version: 1,
+        profiles: {
+          core: { description: 'Core', modules: ['parent'] }
+        }
+      });
+
+      const requiredPlan = resolveInstallPlan({ repoRoot, profileId: 'core', target: 'claude' });
+      assert.deepStrictEqual(requiredPlan.selectedModuleIds, []);
+      assert.deepStrictEqual(requiredPlan.skippedModuleIds, ['parent', 'child']);
+
+      const modulesPath = path.join(repoRoot, 'manifests', 'install-modules.json');
+      const baseManifest = JSON.parse(fs.readFileSync(modulesPath, 'utf8'));
+      const optionalModules = baseManifest.modules.map((module, index) => (
+        index === 0 ? { ...module, optionalDependencies: ['child'] } : { ...module }
+      ));
+      writeJson(modulesPath, { ...baseManifest, modules: optionalModules });
+      const optionalPlan = resolveInstallPlan({ repoRoot, profileId: 'core', target: 'claude' });
+      assert.deepStrictEqual(optionalPlan.selectedModuleIds, ['parent']);
+      assert.deepStrictEqual(optionalPlan.skippedModuleIds, ['child']);
+
+      const supportedModules = optionalModules.map((module, index) => (
+        index === 1 ? { ...module, targets: ['claude'] } : { ...module }
+      ));
+      writeJson(modulesPath, { ...baseManifest, modules: supportedModules });
+      const supportedPlan = resolveInstallPlan({ repoRoot, profileId: 'core', target: 'claude' });
+      assert.deepStrictEqual(supportedPlan.selectedModuleIds, ['parent', 'child']);
+
+      const transitiveModules = [
+        ...supportedModules.map((module, index) => (
+          index === 1 ? { ...module, dependencies: ['grandchild'] } : { ...module }
+        )),
+        { ...supportedModules[1], id: 'grandchild', targets: ['codex'], dependencies: [] }
+      ];
+      writeJson(modulesPath, { ...baseManifest, modules: transitiveModules });
+      const transitivePlan = resolveInstallPlan({ repoRoot, profileId: 'core', target: 'claude' });
+      assert.deepStrictEqual(transitivePlan.selectedModuleIds, []);
+      assert.deepStrictEqual(transitivePlan.skippedModuleIds, ['parent', 'child', 'grandchild']);
+
+      const invalidModules = baseManifest.modules.map((module, index) => (
+        index === 0 ? { ...module, optionalDependencies: ['missing'] } : { ...module }
+      ));
+      writeJson(modulesPath, { ...baseManifest, modules: invalidModules });
+      assert.throws(
+        () => resolveInstallPlan({ repoRoot, profileId: 'core', target: 'claude' }),
+        /optionalDependencies must be an array of declared dependency ids/
+      );
+    } finally {
+      cleanupTestRepo(repoRoot);
+    }
+  })) passed++; else failed++;
+
+  if (test('retains dependencies only when reachable from a successful request', () => {
+    const repoRoot = createTestRepo();
+    try {
+      const module = (id, dependencies = [], targets = ['claude']) => ({
+        id, kind: 'skills', description: id, paths: [id], targets,
+        dependencies, defaultInstall: false, cost: 'light', stability: 'stable'
+      });
+      writeJson(path.join(repoRoot, 'manifests', 'install-modules.json'), {
+        version: 1,
+        modules: [
+          module('parent', ['child', 'unsupported']),
+          module('child', ['leaf']),
+          module('leaf'),
+          module('unsupported', [], ['codex']),
+          module('successful', ['child'])
+        ]
+      });
+      writeJson(path.join(repoRoot, 'manifests', 'install-profiles.json'), {
+        version: 1, profiles: { core: { description: 'Core', modules: ['parent'] } }
+      });
+      const plan = modules => resolveInstallPlan({ repoRoot, moduleIds: modules, target: 'claude' });
+      assert.deepStrictEqual(plan(['parent']).selectedModuleIds, []);
+      assert.deepStrictEqual(plan(['parent']).skippedModuleIds, ['parent', 'unsupported']);
+      assert.deepStrictEqual(plan(['parent', 'successful']).selectedModuleIds, ['child', 'leaf', 'successful']);
+      assert.deepStrictEqual(plan(['successful', 'parent']).selectedModuleIds, ['child', 'leaf', 'successful']);
+      assert.deepStrictEqual(plan(['parent', 'child']).selectedModuleIds, ['child', 'leaf']);
     } finally {
       cleanupTestRepo(repoRoot);
     }

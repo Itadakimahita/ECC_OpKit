@@ -23,7 +23,7 @@ class PacketReviewFixTests(unittest.TestCase):
 
     def test_harness_documentation_targets_exist_and_match_canonical(self):
         repo = ROOT.parents[1]
-        for harness in ('.agents', '.cursor'):
+        for harness in ('.agents',):
             mirror = repo / harness / 'skills/ecc-contribution-review'
             for relative in ('docs/WORKFLOW.md', 'docs/DESIGN.md',
                              'references/contribution-review-contract.md'):

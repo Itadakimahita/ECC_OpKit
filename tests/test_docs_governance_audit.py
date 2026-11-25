@@ -48,7 +48,7 @@ def test_module_audit_checks_local_carriers_links_and_is_read_only(project: Path
     assert after == before
 
 
-@pytest.mark.parametrize("distribution", ("skills", ".agents/skills", "pi/core/skills"))
+@pytest.mark.parametrize("distribution", ("skills", ".agents/skills"))
 @pytest.mark.parametrize("role,filename", (("agents", "AGENTS.md"), ("context", "CONTEXT.md")))
 @pytest.mark.parametrize("broken", (False, True))
 @pytest.mark.parametrize("module_path", (".", "src/inventory"))

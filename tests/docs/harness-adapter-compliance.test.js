@@ -11,6 +11,7 @@ const {
   MATRIX_BLOCK_START,
   extractMatrixBlock,
   renderMarkdownTable,
+  validateAdapterRecords,
   validateDocumentation,
   validateSourceDocs,
 } = require('../../scripts/lib/harness-adapter-compliance');
@@ -38,6 +39,28 @@ function read(relativePath) {
 }
 
 console.log('\n=== Testing harness adapter compliance docs ===\n');
+
+test('adapter compliance matrix covers the required harness surfaces', () => {
+  const source = read('docs/architecture/harness-adapter-compliance.md');
+  for (const harness of [
+    'Claude Code',
+    'Codex',
+    'Terminal-only'
+  ]) {
+    assert.ok(source.includes(harness), `Expected matrix to include ${harness}`);
+  }
+});
+
+test('adapter compliance source data validates required evidence fields', () => {
+  assert.deepStrictEqual(validateAdapterRecords(), []);
+
+  for (const record of ADAPTER_RECORDS) {
+    assert.ok(record.install_or_onramp.length > 0, `${record.id} needs an install or onramp`);
+    assert.ok(record.verification_commands.length > 0, `${record.id} needs verification commands`);
+    assert.ok(record.risk_notes.length > 0, `${record.id} needs risk notes`);
+    assert.ok(record.source_docs.length > 0, `${record.id} needs source docs`);
+  }
+});
 
 test('adapter compliance matrix is generated from source data', () => {
   const source = read('docs/architecture/harness-adapter-compliance.md');

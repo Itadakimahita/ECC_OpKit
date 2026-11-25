@@ -11,6 +11,7 @@ const path = require('path');
 
 const {
   buildCatalog,
+  formatExpectation,
   runCatalogCheck,
   syncCatalogDescription,
 } = require('../../scripts/ci/catalog');
@@ -276,6 +277,74 @@ function runTests() {
         assert.ok(check, `Missing check for ${source}`);
         assert.strictEqual(check.ok, true, `${source} must preserve explicit lower-bound semantics`);
       }
+    } finally {
+      cleanupTestDir(testDir);
+    }
+  })) passed++; else failed++;
+
+  if (test('reports mismatches from every tracked catalog document', () => {
+    const testDir = createTestDir();
+    try {
+      writeCatalogFixture(testDir, {
+        actualCounts: { agents: 1, skills: 1, commands: 1 },
+        documentedCounts: { agents: 9, skills: 9, commands: 9 },
+      });
+
+      const result = runCatalogCheck({ root: testDir });
+      const formatted = result.checks
+        .filter(check => !check.ok)
+        .map(formatExpectation)
+        .join('\n');
+
+      assert.ok(formatted.includes('README.md quick-start summary'));
+      assert.ok(formatted.includes('README.md project tree'));
+      assert.ok(formatted.includes('AGENTS.md summary'));
+      assert.ok(formatted.includes('SOUL.md'));
+      assert.ok(formatted.includes('.claude-plugin/plugin.json description'));
+      assert.ok(formatted.includes('.claude-plugin/marketplace.json plugin description'));
+      assert.ok(formatted.includes('README.zh-CN.md quick-start summary'));
+      assert.ok(formatted.includes('docs/zh-CN/README.md parity table'));
+      assert.ok(formatted.includes('docs/zh-CN/AGENTS.md project structure'));
+    } finally {
+      cleanupTestDir(testDir);
+    }
+  })) passed++; else failed++;
+
+  if (test('write mode syncs counts while preserving plus suffixes and unrelated tables', () => {
+    const testDir = createTestDir();
+    try {
+      writeCatalogFixture(testDir, {
+        actualCounts: { agents: 1, skills: 1, commands: 1 },
+        documentedCounts: { agents: 7, skills: 7, commands: 7 },
+        skillsMinimum: true,
+        unrelatedSkillsCount: 42,
+      });
+
+      const result = runCatalogCheck({ root: testDir, writeMode: true });
+
+      assert.strictEqual(result.checks.filter(check => !check.ok).length, 0);
+
+      const readme = fs.readFileSync(path.join(testDir, 'README.md'), 'utf8');
+      const agentsDoc = fs.readFileSync(path.join(testDir, 'AGENTS.md'), 'utf8');
+      const soulDoc = fs.readFileSync(path.join(testDir, 'SOUL.md'), 'utf8');
+      const zhReadme = fs.readFileSync(path.join(testDir, 'docs', 'zh-CN', 'README.md'), 'utf8');
+      const zhAgentsDoc = fs.readFileSync(path.join(testDir, 'docs', 'zh-CN', 'AGENTS.md'), 'utf8');
+      const pluginJson = fs.readFileSync(path.join(testDir, '.claude-plugin', 'plugin.json'), 'utf8');
+      const marketplaceJson = fs.readFileSync(path.join(testDir, '.claude-plugin', 'marketplace.json'), 'utf8');
+
+      assert.ok(readme.includes('Access to 1 agents, 1 skills, and 1 legacy command shims'));
+      assert.ok(readme.includes('actual OSS surface: 7 agents, 7 skills, and 7 legacy command shims'));
+      assert.ok(readme.includes('|-- agents/           # 1 specialized subagents for delegation'));
+      assert.strictEqual((readme.match(/# 1 specialized subagents for delegation/g) || []).length, 2);
+      assert.ok(readme.includes('| Skills | 42 | .agents/skills/ |'));
+      assert.ok(agentsDoc.includes('providing 1 specialized agents, 1+ skills, 1 commands'));
+      assert.ok(agentsDoc.includes('skills/ - 1+ workflow skills and domain knowledge'));
+      assert.ok(soulDoc.includes('with 1 specialized agents, 1 skills, 1 commands'));
+      assert.ok(zhReadme.includes('| 技能 | 42 | .agents/skills/ |'));
+      assert.ok(zhAgentsDoc.includes('提供 1 个专业代理、1+ 项技能、1 条命令'));
+      assert.ok(zhAgentsDoc.includes('skills/ - 1+ 个工作流技能和领域知识'));
+      assert.ok(pluginJson.includes('1 agents, 1 skills, 1 legacy command shims'));
+      assert.ok(marketplaceJson.includes('1 agents, 1 skills, 1 legacy command shims'));
     } finally {
       cleanupTestDir(testDir);
     }

@@ -424,6 +424,20 @@ async function runTests() {
 
   if (process.argv.includes('--lifecycle-only')) return runLifecycleTests();
 
+  if (await test('delegates to the Node installer and preserves dry-run output', async () => {
+    await withTempDirs(['install-sh-home-', 'install-sh-project-'], async (homeDir, projectDir) => {
+
+      const result = await run(['--target', 'claude-project', '--dry-run', 'typescript'], {
+        cwd: projectDir,
+        homeDir,
+      });
+
+      assert.strictEqual(result.code, 0, result.stderr);
+      assert.ok(result.stdout.includes('Dry-run install plan'));
+      assert.ok(!fs.existsSync(path.join(projectDir, '.claude')));
+    });
+  })) passed++; else failed++;
+
   if (await test('absolute wrapper bootstraps a fresh source while preserving the target project cwd', async () => {
     await withTempDirs(['install-sh-source-', 'install-sh-target-'], async (sourceDir, projectDir) => {
       const binDir = path.join(sourceDir, 'test-bin');

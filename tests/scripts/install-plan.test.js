@@ -74,6 +74,43 @@ function runTests() {
     assert.ok(!result.stdout.includes('capability:security'));
   })) passed++; else failed++;
 
+  if (test('prints a filtered install plan for a profile and target', () => {
+    const result = run([
+      '--profile', 'developer',
+      '--with', 'capability:security',
+      '--without', 'capability:orchestration',
+      '--target', 'claude-project'
+    ]);
+    assert.strictEqual(result.code, 0);
+    assert.ok(result.stdout.includes('Install plan'));
+    assert.ok(result.stdout.includes('Included components: capability:security'));
+    assert.ok(result.stdout.includes('Excluded components: capability:orchestration'));
+    assert.ok(result.stdout.includes('Adapter: claude-project'));
+    assert.ok(result.stdout.includes('Target root:'));
+    assert.ok(result.stdout.includes('Install-state:'));
+    assert.ok(result.stdout.includes('Operation plan'));
+    assert.ok(result.stdout.includes('Excluded by selection'));
+    assert.ok(result.stdout.includes('security'));
+  })) passed++; else failed++;
+
+  if (test('emits JSON for explicit module resolution', () => {
+    const result = run([
+      '--modules', 'security',
+      '--with', 'capability:research',
+      '--target', 'claude-project',
+      '--json'
+    ]);
+    assert.strictEqual(result.code, 0);
+    const parsed = JSON.parse(result.stdout);
+    assert.ok(parsed.selectedModuleIds.includes('security'));
+    assert.ok(parsed.selectedModuleIds.includes('research-apis'));
+    assert.ok(parsed.selectedModuleIds.includes('workflow-quality'));
+    assert.deepStrictEqual(parsed.includedComponentIds, ['capability:research']);
+    assert.strictEqual(parsed.targetAdapterId, 'claude-project');
+    assert.ok(Array.isArray(parsed.operations));
+    assert.ok(parsed.operations.length > 0);
+  })) passed++; else failed++;
+
   if (test('emits JSON for --skills without pulling parent module', () => {
     const result = run([
       '--skills', 'continuous-learning-v2',
@@ -86,6 +123,33 @@ function runTests() {
     assert.deepStrictEqual(parsed.selectedModuleIds, ['skill-continuous-learning-v2']);
     assert.ok(parsed.operations.some(operation => operation.sourceRelativePath === 'skills/continuous-learning-v2'));
     assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/tdd-workflow'));
+  })) passed++; else failed++;
+
+  if (test('loads planning intent from ecc-install.json', () => {
+    const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-config');
+    const configPath = path.join(configDir, 'ecc-install.json');
+
+    try {
+      require('fs').mkdirSync(configDir, { recursive: true });
+      require('fs').writeFileSync(configPath, JSON.stringify({
+        version: 1,
+        target: 'claude-project',
+        profile: 'core',
+        include: ['capability:security'],
+        exclude: ['capability:orchestration'],
+      }, null, 2));
+
+      const result = run(['--config', configPath, '--json']);
+      assert.strictEqual(result.code, 0);
+      const parsed = JSON.parse(result.stdout);
+      assert.strictEqual(parsed.target, 'claude-project');
+      assert.deepStrictEqual(parsed.includedComponentIds, ['capability:security']);
+      assert.deepStrictEqual(parsed.excludedComponentIds, ['capability:orchestration']);
+      assert.ok(parsed.selectedModuleIds.includes('security'));
+      assert.ok(!parsed.selectedModuleIds.includes('orchestration'));
+    } finally {
+      require('fs').rmSync(configDir, { recursive: true, force: true });
+    }
   })) passed++; else failed++;
 
   if (test('config component selections produce the same operations as CLI flags', () => {
@@ -114,6 +178,31 @@ function runTests() {
       assert.deepStrictEqual(actual.operations, expected.operations);
     } finally {
       fs.rmSync(configDir, { recursive: true, force: true });
+    }
+  })) passed++; else failed++;
+
+  if (test('auto-detects planning intent from project ecc-install.json', () => {
+    const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-autodetect');
+    const configPath = path.join(configDir, 'ecc-install.json');
+
+    try {
+      require('fs').mkdirSync(configDir, { recursive: true });
+      require('fs').writeFileSync(configPath, JSON.stringify({
+        version: 1,
+        target: 'claude-project',
+        profile: 'core',
+        include: ['capability:security'],
+      }, null, 2));
+
+      const result = run(['--json'], { cwd: configDir });
+      assert.strictEqual(result.code, 0, result.stderr);
+      const parsed = JSON.parse(result.stdout);
+      assert.strictEqual(parsed.target, 'claude-project');
+      assert.strictEqual(parsed.profileId, 'core');
+      assert.deepStrictEqual(parsed.includedComponentIds, ['capability:security']);
+      assert.ok(parsed.selectedModuleIds.includes('security'));
+    } finally {
+      require('fs').rmSync(configDir, { recursive: true, force: true });
     }
   })) passed++; else failed++;
 
