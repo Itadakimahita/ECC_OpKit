@@ -44,7 +44,7 @@
       "companions": [{ "name": "status-report" }]
     },
     {
-      "query": "write e2e tests for the signup flow with playwright",
+      "query": "write playwright e2e tests with page objects for the signup flow",
       "eccSelected": ["skill:e2e-testing"],
       "companions": []
     },

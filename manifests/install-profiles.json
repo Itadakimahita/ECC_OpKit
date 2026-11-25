@@ -66,8 +66,7 @@
         "platform-configs",
         "workflow-quality",
         "research-apis",
-        "business-content",
-        "social-distribution"
+        "business-content"
       ]
     },
     "full": {
@@ -89,19 +88,10 @@
         "business-content",
         "operator-workflows",
         "optimization-workflows",
-        "prediction-market-skills",
-        "operator-desk-patterns",
-        "ito-compute",
-        "nasiko-control-plane",
-        "social-distribution",
         "media-generation",
         "orchestration",
-        "swift-apple",
         "agentic-patterns",
         "devops-infra",
-        "machine-learning",
-        "supply-chain-domain",
-        "document-processing",
         "documentation-context",
         "hermes-hooks",
         "documentation-change-impact",

@@ -77,13 +77,6 @@ test('cross-harness architecture doc exists and names core harnesses', () => {
   }
 });
 
-test('Hermes import skill exists and declares sanitization rules', () => {
-  const source = read('skills/hermes-imports/SKILL.md');
-  assert.ok(source.includes('name: hermes-imports'));
-  assert.ok(source.includes('Sanitization Checklist'));
-  assert.ok(source.includes('Do not ship raw workspace exports'));
-});
-
 test('release docs do not contain private local workspace paths', () => {
   const offenders = [];
   for (const filePath of walkMarkdown(releaseDir)) {

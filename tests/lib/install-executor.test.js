@@ -796,7 +796,7 @@ function runTests() {
           assert.ok(config.instructions.includes(path.join(plan.targetRoot, 'instructions', 'INSTRUCTIONS.md')));
           assert.ok(config.instructions.includes(path.join(plan.targetRoot, 'skills', 'tdd-workflow', 'SKILL.md')));
           assert.strictEqual(
-            config.instructions.includes(path.join(plan.targetRoot, 'skills', 'frontend-slides', 'SKILL.md')),
+            config.instructions.includes(path.join(plan.targetRoot, 'skills', 'deep-research', 'SKILL.md')),
             profileId === 'full'
           );
           for (const instruction of config.instructions) {

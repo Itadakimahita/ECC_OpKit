@@ -239,17 +239,12 @@ function runTests() {
     assert.ok(components.some(c => c.id === 'lang:typescript'), 'Should have lang:typescript');
     assert.ok(components.some(c => c.id === 'lang:python'), 'Should have lang:python');
     assert.ok(components.some(c => c.id === 'lang:go'), 'Should have lang:go');
-    assert.ok(components.some(c => c.id === 'lang:java'), 'Should have lang:java');
-    assert.ok(components.some(c => c.id === 'lang:ruby'), 'Should have lang:ruby');
+    assert.ok(components.some(c => c.id === 'lang:rust'), 'Should have lang:rust');
   })) passed++; else failed++;
 
   if (test('component catalog includes framework: family entries', () => {
     const components = listInstallComponents({ family: 'framework' });
     assert.ok(components.some(c => c.id === 'framework:react'), 'Should have framework:react');
-    assert.ok(components.some(c => c.id === 'framework:nextjs'), 'Should have framework:nextjs');
-    assert.ok(components.some(c => c.id === 'framework:django'), 'Should have framework:django');
-    assert.ok(components.some(c => c.id === 'framework:springboot'), 'Should have framework:springboot');
-    assert.ok(components.some(c => c.id === 'framework:rails'), 'Should have framework:rails');
   })) passed++; else failed++;
 
   if (test('component catalog includes capability: family entries', () => {
@@ -333,15 +328,15 @@ function runTests() {
   if (test('multiple --without flags exclude multiple modules', () => {
     const plan = resolveInstallPlan({
       profileId: 'full',
-      excludeComponentIds: ['capability:media', 'capability:social', 'capability:supply-chain'],
+      excludeComponentIds: ['capability:media', 'capability:research', 'capability:devops'],
       target: 'claude',
     });
     assert.ok(!plan.selectedModuleIds.includes('media-generation'));
-    assert.ok(!plan.selectedModuleIds.includes('social-distribution'));
-    assert.ok(!plan.selectedModuleIds.includes('supply-chain-domain'));
+    assert.ok(!plan.selectedModuleIds.includes('research-apis'));
+    assert.ok(!plan.selectedModuleIds.includes('devops-infra'));
     assert.ok(plan.excludedModuleIds.includes('media-generation'));
-    assert.ok(plan.excludedModuleIds.includes('social-distribution'));
-    assert.ok(plan.excludedModuleIds.includes('supply-chain-domain'));
+    assert.ok(plan.excludedModuleIds.includes('research-apis'));
+    assert.ok(plan.excludedModuleIds.includes('devops-infra'));
   })) passed++; else failed++;
 
   // ─── Combined --with + --without ───
@@ -364,8 +359,8 @@ function runTests() {
   if (test('--without on a dependency of --with raises an error', () => {
     assert.throws(
       () => resolveInstallPlan({
-        includeComponentIds: ['capability:social'],
-        excludeComponentIds: ['capability:content'],
+        includeComponentIds: ['capability:optimization'],
+        excludeComponentIds: ['capability:operators'],
       }),
       /depends on excluded module/
     );

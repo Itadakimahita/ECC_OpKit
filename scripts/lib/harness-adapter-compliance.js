@@ -331,7 +331,6 @@ const ADAPTER_RECORDS = Object.freeze([
     owner: 'ECC maintainers',
     source_docs: [
       'docs/DEEPSEEK-HARNESS-GUIDE.md',
-      'skills/deepseek-harness-setup/SKILL.md',
       'scripts/dsh/generate-hooks-config.js',
       'tests/scripts/dsh-generate-hooks-config.test.js',
     ],

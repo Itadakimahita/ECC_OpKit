@@ -13,17 +13,13 @@ const agentNames = [
   'react-reviewer',
   'typescript-reviewer',
   'react-build-resolver',
-  'vue-reviewer',
   'code-architect',
   'code-explorer',
   'fastapi-reviewer',
-  'flutter-reviewer',
-  'dart-build-resolver',
   'gan-planner',
   'gan-generator',
   'gan-evaluator',
   'conversation-analyzer',
-  'marketing-agent',
 ];
 
 function convertAgent(source, sourcePath) {

@@ -17,16 +17,11 @@ const agentsByCommand = {
   'react-review': ['react-reviewer', 'typescript-reviewer'],
   'react-test': ['react-reviewer'],
   'react-build': ['react-build-resolver'],
-  'vue-review': ['vue-reviewer', 'typescript-reviewer'],
   'feature-dev': ['code-architect', 'code-explorer'],
   'orch-fix-defect': ['code-explorer'],
   'fastapi-review': ['fastapi-reviewer'],
-  'flutter-review': ['flutter-reviewer'],
-  'flutter-build': ['dart-build-resolver'],
-  'flutter-test': ['dart-build-resolver', 'flutter-reviewer'],
   'gan-build': ['gan-planner', 'gan-generator', 'gan-evaluator'],
   'hookify': ['conversation-analyzer'],
-  'marketing-campaign': ['marketing-agent'],
 };
 
 test('a full OpenCode install includes agents required by affected commands', () => {

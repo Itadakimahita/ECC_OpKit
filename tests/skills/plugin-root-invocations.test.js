@@ -107,15 +107,6 @@ test('autonomous-loops resolves claw.js through the ECC root', () => {
     /CLAW_SESSION=my-project CLAW_SKILLS=tdd-workflow,security-review node "\$ECC_ROOT\/scripts\/claw\.js"/);
 });
 
-test('dmux-workflows resolves orchestrate-worktrees.js through the ECC root', () => {
-  assertResolvesScript('dmux-workflows', 'orchestrate-worktrees.js');
-});
-
-test('seedPaths examples stay relative to the user repository', () => {
-  const skill = readSkill('dmux-workflows');
-  assert.match(skill, /"scripts\/orchestrate-worktrees\.js"/);
-});
-
 // ---------------------------------------------------------------------------
 // Executed checks: run the documented command against a real plugin root.
 // ---------------------------------------------------------------------------
@@ -240,7 +231,6 @@ test('documented detector refuses a user-project lookalike script without an ECC
 for (const [skillName, script] of [
   ['tdd-workflow', 'setup-package-manager.js'],
   ['autonomous-loops', 'claw.js'],
-  ['dmux-workflows', 'orchestrate-worktrees.js'],
 ]) {
   for (const explicitMissingRoot of [false, true]) {
     test(`${skillName} refuses both-marker project lookalikes${explicitMissingRoot ? ' even with an explicit missing root' : ''}`, () => {

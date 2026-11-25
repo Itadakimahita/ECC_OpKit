@@ -17,7 +17,7 @@ const tests = [
     assert.strictEqual(output.profileCount, 2);
     assert.ok(output.targetCount >= 15);
     assert.strictEqual(output.projectionCount, output.profileCount * output.targetCount);
-    assert.ok(output.skillCount >= 286);
+    assert.ok(output.skillCount >= 139);
     assert.strictEqual(output.nativeCertification, 'unobserved');
   }],
   ['rejects unknown validator flags', () => {

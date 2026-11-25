@@ -123,10 +123,10 @@ function main() {
       assert.ok(payload.profiles.length > 0);
     }],
     ['delegates catalog command', () => {
-      const result = runCli(['catalog', 'show', 'framework:nextjs', '--json']);
+      const result = runCli(['catalog', 'show', 'framework:react', '--json']);
       assert.strictEqual(result.status, 0, result.stderr);
       const payload = parseJson(result.stdout);
-      assert.strictEqual(payload.id, 'framework:nextjs');
+      assert.strictEqual(payload.id, 'framework:react');
       assert.deepStrictEqual(payload.moduleIds, ['framework-language']);
     }],
     ['delegates consult command', () => {

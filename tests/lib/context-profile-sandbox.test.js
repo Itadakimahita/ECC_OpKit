@@ -13,9 +13,9 @@ const input = { archiveDigest: 'a'.repeat(64), verifierDigest: 'b'.repeat(64), r
 
 test('independent packed oracle separates canonical IDs from native metadata names', () => {
   const skills = discoverPublishedSkills(require('node:path').resolve(__dirname, '../..'));
-  const pubmed = skills.find(skill => skill.id === 'skill:scientific-db-pubmed-database');
-  assert.deepEqual(pubmed, { id: 'skill:scientific-db-pubmed-database',
-    sourceName: 'scientific-db-pubmed-database', nativeName: 'scientific-db-pubmed-database' });
+  const tdd = skills.find(skill => skill.id === 'skill:tdd-workflow');
+  assert.deepEqual(tdd, { id: 'skill:tdd-workflow',
+    sourceName: 'tdd-workflow', nativeName: 'tdd-workflow' });
   assert.equal(new Set(skills.map(skill => skill.id)).size, skills.length);
   assert.equal(new Set(skills.map(skill => skill.nativeName)).size, skills.length);
 });
