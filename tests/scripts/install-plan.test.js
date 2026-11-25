@@ -79,13 +79,13 @@ function runTests() {
       '--profile', 'developer',
       '--with', 'capability:security',
       '--without', 'capability:orchestration',
-      '--target', 'cursor'
+      '--target', 'claude-project'
     ]);
     assert.strictEqual(result.code, 0);
     assert.ok(result.stdout.includes('Install plan'));
     assert.ok(result.stdout.includes('Included components: capability:security'));
     assert.ok(result.stdout.includes('Excluded components: capability:orchestration'));
-    assert.ok(result.stdout.includes('Adapter: cursor-project'));
+    assert.ok(result.stdout.includes('Adapter: claude-project'));
     assert.ok(result.stdout.includes('Target root:'));
     assert.ok(result.stdout.includes('Install-state:'));
     assert.ok(result.stdout.includes('Operation plan'));
@@ -97,7 +97,7 @@ function runTests() {
     const result = run([
       '--modules', 'security',
       '--with', 'capability:research',
-      '--target', 'cursor',
+      '--target', 'claude-project',
       '--json'
     ]);
     assert.strictEqual(result.code, 0);
@@ -106,7 +106,7 @@ function runTests() {
     assert.ok(parsed.selectedModuleIds.includes('research-apis'));
     assert.ok(parsed.selectedModuleIds.includes('workflow-quality'));
     assert.deepStrictEqual(parsed.includedComponentIds, ['capability:research']);
-    assert.strictEqual(parsed.targetAdapterId, 'cursor-project');
+    assert.strictEqual(parsed.targetAdapterId, 'claude-project');
     assert.ok(Array.isArray(parsed.operations));
     assert.ok(parsed.operations.length > 0);
   })) passed++; else failed++;
@@ -125,34 +125,6 @@ function runTests() {
     assert.ok(!parsed.operations.some(operation => operation.sourceRelativePath === 'skills/tdd-workflow'));
   })) passed++; else failed++;
 
-  if (test('resolves Mistral Vibe preview paths from the caller project', () => {
-    const projectDir = require('fs').mkdtempSync(
-      path.join(require('os').tmpdir(), 'ecc-vibe-plan-project-')
-    );
-    try {
-      const realProjectDir = require('fs').realpathSync(projectDir);
-      const result = run([
-        '--skills', 'tdd-workflow',
-        '--target', 'mistral-vibe',
-        '--json',
-      ], { cwd: projectDir });
-      assert.strictEqual(result.code, 0, result.stderr);
-      const parsed = JSON.parse(result.stdout);
-      assert.strictEqual(parsed.targetRoot, path.join(realProjectDir, '.vibe'));
-      assert.strictEqual(
-        parsed.installStatePath,
-        path.join(realProjectDir, '.vibe', 'ecc-install-state.json')
-      );
-      assert.ok(parsed.operations.every(operation => (
-        operation.destinationPath.startsWith(
-          `${path.join(realProjectDir, '.vibe', 'skills')}${path.sep}`
-        )
-      )));
-    } finally {
-      require('fs').rmSync(projectDir, { recursive: true, force: true });
-    }
-  })) passed++; else failed++;
-
   if (test('loads planning intent from ecc-install.json', () => {
     const configDir = path.join(__dirname, '..', 'fixtures', 'tmp-install-plan-config');
     const configPath = path.join(configDir, 'ecc-install.json');
@@ -161,7 +133,7 @@ function runTests() {
       require('fs').mkdirSync(configDir, { recursive: true });
       require('fs').writeFileSync(configPath, JSON.stringify({
         version: 1,
-        target: 'cursor',
+        target: 'claude-project',
         profile: 'core',
         include: ['capability:security'],
         exclude: ['capability:orchestration'],
@@ -170,7 +142,7 @@ function runTests() {
       const result = run(['--config', configPath, '--json']);
       assert.strictEqual(result.code, 0);
       const parsed = JSON.parse(result.stdout);
-      assert.strictEqual(parsed.target, 'cursor');
+      assert.strictEqual(parsed.target, 'claude-project');
       assert.deepStrictEqual(parsed.includedComponentIds, ['capability:security']);
       assert.deepStrictEqual(parsed.excludedComponentIds, ['capability:orchestration']);
       assert.ok(parsed.selectedModuleIds.includes('security'));
@@ -217,7 +189,7 @@ function runTests() {
       require('fs').mkdirSync(configDir, { recursive: true });
       require('fs').writeFileSync(configPath, JSON.stringify({
         version: 1,
-        target: 'cursor',
+        target: 'claude-project',
         profile: 'core',
         include: ['capability:security'],
       }, null, 2));
@@ -225,7 +197,7 @@ function runTests() {
       const result = run(['--json'], { cwd: configDir });
       assert.strictEqual(result.code, 0, result.stderr);
       const parsed = JSON.parse(result.stdout);
-      assert.strictEqual(parsed.target, 'cursor');
+      assert.strictEqual(parsed.target, 'claude-project');
       assert.strictEqual(parsed.profileId, 'core');
       assert.deepStrictEqual(parsed.includedComponentIds, ['capability:security']);
       assert.ok(parsed.selectedModuleIds.includes('security'));

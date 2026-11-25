@@ -33,21 +33,21 @@ function runTests() {
   let passed = 0;
   let failed = 0;
 
-  if (test('represents all 19 registered targets exactly once across 17 harnesses', () => {
+  if (test('represents all 3 registered targets exactly once across 2 harnesses', () => {
     const catalogTargetIds = HARNESS_CAPABILITIES.flatMap(harness => harness.targetIds);
     const adapterTargetIds = listInstallTargetAdapters().map(adapter => adapter.target);
 
-    assert.strictEqual(HARNESS_CAPABILITIES.length, 17);
-    assert.strictEqual(new Set(catalogTargetIds).size, 19);
+    assert.strictEqual(HARNESS_CAPABILITIES.length, 2);
+    assert.strictEqual(new Set(catalogTargetIds).size, 3);
     assert.deepStrictEqual([...catalogTargetIds].sort(), [...SUPPORTED_INSTALL_TARGETS].sort());
     assert.deepStrictEqual([...catalogTargetIds].sort(), [...adapterTargetIds].sort());
   })) passed++; else failed++;
 
-  if (test('only Claude, Codex, and Kimi are guided-ready', () => {
-    assert.deepStrictEqual(GUIDED_HARNESS_IDS, ['claude', 'codex', 'kimi']);
+  if (test('only Claude and Codex are guided-ready', () => {
+    assert.deepStrictEqual(GUIDED_HARNESS_IDS, ['claude', 'codex']);
     assert.deepStrictEqual(
       listGuidedHarnesses().map(harness => harness.id),
-      ['claude', 'codex', 'kimi']
+      ['claude', 'codex']
     );
     assert.ok(HARNESS_CAPABILITIES
       .filter(harness => !harness.guidedReady)
@@ -74,91 +74,15 @@ function runTests() {
     assert.deepStrictEqual(codex.scopes, [
       { id: 'native', targetId: 'codex', root: '~/.codex' },
     ]);
-
-    const kimi = getHarnessCapability('kimi');
-    assert.deepStrictEqual(kimi.targetIds, ['kimi']);
-    assert.strictEqual(kimi.channel, 'managed-project');
-    assert.strictEqual(kimi.installMode, 'managed-project');
-    assert.strictEqual(kimi.destination, './.kimi-code');
-    assert.deepStrictEqual(kimi.scopes, [
-      { id: 'project', targetId: 'kimi', root: './.kimi-code' },
-    ]);
-
-    const antigravity = getHarnessCapability('antigravity');
-    assert.deepStrictEqual(antigravity.targetIds, ['antigravity-home', 'antigravity']);
-    assert.strictEqual(antigravity.channel, 'native-plugin');
-    assert.strictEqual(antigravity.installMode, 'native-plugin');
-    assert.match(antigravity.destination, /selected Antigravity scope/i);
-    assert.deepStrictEqual(antigravity.scopes, [
-      { id: 'user', targetId: 'antigravity-home', root: '~/.gemini/config/plugins/ecc' },
-      { id: 'project', targetId: 'antigravity', root: './.agents' },
-    ]);
-
-    const opencode = getHarnessCapability('opencode');
-    assert.match(opencode.destinationResolution, /OPENCODE_CONFIG_DIR/);
-    assert.match(opencode.destinationResolution, /XDG_CONFIG_HOME/);
-    assert.match(opencode.destinationResolution, /~\/\.config\/opencode/);
   })) passed++; else failed++;
 
-  if (test('keeps every advanced target attached to its registered root and scope', () => {
-    const expected = {
-      cursor: ['project', './.cursor'],
-      gemini: ['project', './.gemini'],
-      opencode: ['home', '~/.config/opencode'],
-      codebuddy: ['project', './.codebuddy'],
-      joycode: ['project', './.joycode'],
-      qwen: ['home', '~/.qwen'],
-      zed: ['project', './.zed'],
-      adal: ['project', './.adal'],
-      hermes: ['home', '~/.hermes'],
-      openclaw: ['home', '~/.openclaw'],
-      grok: ['native', '~/.grok'],
-      'mistral-vibe': ['project', './.vibe'],
-    };
-
-    for (const [id, [scopeId, root]] of Object.entries(expected)) {
-      const harness = getHarnessCapability(id);
-      assert.strictEqual(harness.guidedReady, false, id);
-      assert.strictEqual(harness.availability, 'advanced', id);
-      assert.strictEqual(harness.destination, root, id);
-      assert.deepStrictEqual(harness.scopes, [
-        { id: scopeId, targetId: id, root },
-      ], id);
-    }
-  })) passed++; else failed++;
-
-  if (test('describes hook capability without claiming Kimi provider support is absent', () => {
+  if (test('describes Claude and Codex hook capability', () => {
     assert.strictEqual(getHarnessCapability('claude').hooks.mode, 'profile-selection');
     assert.strictEqual(getHarnessCapability('codex').hooks.mode, 'native-trust');
-
-    const kimiHooks = getHarnessCapability('kimi').hooks;
-    assert.strictEqual(kimiHooks.mode, 'not-configured');
-    assert.strictEqual(kimiHooks.eccConfigured, false);
-    assert.match(kimiHooks.note, /ECC hooks are not configured/i);
-    assert.strictEqual(kimiHooks.summary, kimiHooks.note);
-    assert.doesNotMatch(kimiHooks.note, /provider.*unsupported|Kimi.*unsupported/i);
   })) passed++; else failed++;
 
-  if (test('registers Copilot as an advanced project harness', () => {
-    const copilot = getHarnessCapability('copilot');
-    assert.ok(copilot);
-    assert.deepStrictEqual(copilot.targetIds, ['copilot']);
-    assert.strictEqual(copilot.installMode, 'managed-project');
-    assert.strictEqual(copilot.destination, './.github');
-    assert.strictEqual(copilot.guidedReady, false);
-    assert.strictEqual(copilot.availability, 'advanced');
-    assert.strictEqual(copilot.hooks.mode, 'not-configured');
-    assert.strictEqual(copilot.hooks.eccConfigured, false);
-    assert.match(copilot.hooks.note, /ECC hooks .*not installed for Copilot/i);
-    // Copilot stays out of the guided wizard, which is Claude/Codex/Kimi only.
-    assert.throws(
-      () => normalizeHarnessSelection('copilot'),
-      /Unknown guided harness selection|advanced/i
-    );
-  })) passed++; else failed++;
-
-  if (test('does not advertise unregistered Kiro or Pi harnesses', () => {
-    for (const id of ['kiro', 'pi']) {
+  if (test('does not advertise unregistered or removed harnesses', () => {
+    for (const id of ['kiro', 'pi', 'kimi', 'cursor', 'opencode']) {
       assert.strictEqual(getHarnessCapability(id), null);
       assert.throws(
         () => normalizeHarnessSelection(id),
@@ -167,27 +91,17 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('describes Mistral Vibe as a skills-only managed project target', () => {
-    const vibe = getHarnessCapability('vibe');
-    assert.strictEqual(vibe.id, 'mistral-vibe');
-    assert.deepStrictEqual(vibe.targetIds, ['mistral-vibe']);
-    assert.strictEqual(vibe.destination, './.vibe');
-    assert.strictEqual(vibe.hooks.mode, 'not-configured');
-    assert.strictEqual(vibe.hooks.eccConfigured, false);
-    assert.match(vibe.hooks.note, /skills/i);
-  })) passed++; else failed++;
-
   if (test('normalizes wizard selections into canonical guided order', () => {
     assert.deepStrictEqual(
-      normalizeHarnessSelection(' KIMI CODE, Claude Code, kimi '),
-      ['claude', 'kimi']
+      normalizeHarnessSelection(' CODEX, Claude Code, claude '),
+      ['claude', 'codex']
     );
     assert.deepStrictEqual(
-      normalizeHarnessSelection(['3', 'claude-project', 'Codex']),
-      ['claude', 'codex', 'kimi']
+      normalizeHarnessSelection(['2', 'claude-project']),
+      ['claude', 'codex']
     );
-    assert.deepStrictEqual(normalizeHarnessSelection('all'), ['claude', 'codex', 'kimi']);
-    assert.deepStrictEqual(normalizeHarnessSelection('*'), ['claude', 'codex', 'kimi']);
+    assert.deepStrictEqual(normalizeHarnessSelection('all'), ['claude', 'codex']);
+    assert.deepStrictEqual(normalizeHarnessSelection('*'), ['claude', 'codex']);
   })) passed++; else failed++;
 
   if (test('rejects empty, ambiguous, advanced, and unknown wizard selections clearly', () => {
@@ -195,8 +109,8 @@ function runTests() {
     assert.throws(() => normalizeHarnessSelection([]), /At least one guided harness/);
     assert.throws(() => normalizeHarnessSelection('none'), /At least one guided harness/);
     assert.throws(() => normalizeHarnessSelection('all,codex'), /cannot be combined/i);
-    assert.throws(() => normalizeHarnessSelection('cursor'), /advanced.*not guided-ready/i);
-    assert.throws(() => normalizeHarnessSelection('grok'), /advanced.*not guided-ready/i);
+    assert.throws(() => normalizeHarnessSelection('cursor'), /Unknown guided harness selection/);
+    assert.throws(() => normalizeHarnessSelection('grok'), /Unknown guided harness selection/);
   })) passed++; else failed++;
 
   if (test('exports deeply frozen records while list helpers return safe array copies', () => {
@@ -210,13 +124,13 @@ function runTests() {
 
     const first = listHarnessCapabilities();
     first.pop();
-    assert.strictEqual(listHarnessCapabilities().length, 17);
+    assert.strictEqual(listHarnessCapabilities().length, 2);
 
     const guided = listGuidedHarnesses();
     guided.reverse();
     assert.deepStrictEqual(
       listGuidedHarnesses().map(harness => harness.id),
-      ['claude', 'codex', 'kimi']
+      ['claude', 'codex']
     );
   })) passed++; else failed++;
 

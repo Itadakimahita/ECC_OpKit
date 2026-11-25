@@ -300,7 +300,6 @@ function runTests() {
       assert.ok(formatted.includes('README.md project tree'));
       assert.ok(formatted.includes('AGENTS.md summary'));
       assert.ok(formatted.includes('SOUL.md'));
-      assert.ok(formatted.includes('.gemini/GEMINI.md'));
       assert.ok(formatted.includes('.claude-plugin/plugin.json description'));
       assert.ok(formatted.includes('.claude-plugin/marketplace.json plugin description'));
       assert.ok(formatted.includes('README.zh-CN.md quick-start summary'));
@@ -328,7 +327,6 @@ function runTests() {
       const readme = fs.readFileSync(path.join(testDir, 'README.md'), 'utf8');
       const agentsDoc = fs.readFileSync(path.join(testDir, 'AGENTS.md'), 'utf8');
       const soulDoc = fs.readFileSync(path.join(testDir, 'SOUL.md'), 'utf8');
-      const geminiDoc = fs.readFileSync(path.join(testDir, '.gemini', 'GEMINI.md'), 'utf8');
       const zhReadme = fs.readFileSync(path.join(testDir, 'docs', 'zh-CN', 'README.md'), 'utf8');
       const zhAgentsDoc = fs.readFileSync(path.join(testDir, 'docs', 'zh-CN', 'AGENTS.md'), 'utf8');
       const pluginJson = fs.readFileSync(path.join(testDir, '.claude-plugin', 'plugin.json'), 'utf8');
@@ -342,7 +340,6 @@ function runTests() {
       assert.ok(agentsDoc.includes('providing 1 specialized agents, 1+ skills, 1 commands'));
       assert.ok(agentsDoc.includes('skills/ - 1+ workflow skills and domain knowledge'));
       assert.ok(soulDoc.includes('with 1 specialized agents, 1 skills, 1 commands'));
-      assert.ok(geminiDoc.includes('with 1 specialized agents, 1 skills, and 1 commands'));
       assert.ok(zhReadme.includes('| 技能 | 42 | .agents/skills/ |'));
       assert.ok(zhAgentsDoc.includes('提供 1 个专业代理、1+ 项技能、1 条命令'));
       assert.ok(zhAgentsDoc.includes('skills/ - 1+ 个工作流技能和领域知识'));

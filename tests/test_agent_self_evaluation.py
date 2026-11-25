@@ -14,7 +14,6 @@ from typing import NoReturn
 import pytest
 
 SCRIPT = Path(__file__).resolve().parents[1] / "skills/agent-self-evaluation/scripts/evaluate.py"
-PI_SCRIPT = SCRIPT.parents[3] / "pi/core/skills/agent-self-evaluation/scripts/evaluate.py"
 
 
 def args(**overrides: object) -> argparse.Namespace:
@@ -122,7 +121,7 @@ def test_task_read_does_not_hide_other_file_errors(evaluator: ModuleType, monkey
     assert captured.value.errno == error_code
 
 
-@pytest.fixture(params=[SCRIPT, PI_SCRIPT], ids=["canonical", "pi"])
+@pytest.fixture(params=[SCRIPT], ids=["canonical"])
 def evaluator(request: pytest.FixtureRequest, monkeypatch: pytest.MonkeyPatch) -> ModuleType:
     spec = importlib.util.spec_from_file_location("task_input_evaluator", request.param)
     assert spec is not None and spec.loader is not None

@@ -5,7 +5,7 @@ const { getInstallTargetAdapter, planInstallTargetScaffold } = require('./instal
 const { resolveInvocationEnvironment } = require('./invocation-environment');
 
 const DEFAULT_REPO_ROOT = path.join(__dirname, '../..');
-const SUPPORTED_INSTALL_TARGETS = ['claude', 'claude-project', 'cursor', 'antigravity', 'antigravity-home', 'codex', 'copilot', 'gemini', 'opencode', 'codebuddy', 'joycode', 'qwen', 'zed', 'hermes', 'openclaw', 'kimi', 'adal', 'grok', 'mistral-vibe'];
+const SUPPORTED_INSTALL_TARGETS = ['claude', 'claude-project', 'codex'];
 const COMPONENT_FAMILY_PREFIXES = {
   baseline: 'baseline:',
   language: 'lang:',
@@ -62,121 +62,29 @@ const LEGACY_COMPAT_BASE_MODULE_IDS_BY_TARGET = Object.freeze({
     'platform-configs',
     'workflow-quality',
   ],
-  cursor: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'hooks-runtime',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  antigravity: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'skill-unified-memory',
-    'workflow-quality',
-  ],
-  'antigravity-home': [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'hooks-runtime',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  zed: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  hermes: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  openclaw: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  kimi: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'platform-configs',
-    'workflow-quality',
-  ],
-  adal: [
-    'rules-core',
-    'agents-core',
-    'commands-core',
-    'platform-configs',
-    'workflow-quality',
-  ],
 });
 const LEGACY_LANGUAGE_ALIAS_TO_CANONICAL = Object.freeze({
-  c: 'c',
-  cpp: 'cpp',
-  csharp: 'csharp',
-  fsharp: 'fsharp',
   go: 'go',
   golang: 'go',
-  arkts: 'arkts',
-  harmonyos: 'arkts',
-  java: 'java',
   javascript: 'typescript',
-  kotlin: 'java',
-  perl: 'perl',
-  php: 'php',
   python: 'python',
-  rails: 'ruby',
-  ruby: 'ruby',
   rust: 'rust',
-  swift: 'swift',
   typescript: 'typescript',
 });
 const LEGACY_LANGUAGE_EXTRA_MODULE_IDS = Object.freeze({
-  c: ['framework-language'],
-  cpp: ['framework-language'],
-  csharp: ['framework-language'],
-  fsharp: ['framework-language'],
   go: ['framework-language'],
-  arkts: ['framework-language'],
-  java: ['framework-language'],
-  perl: [],
-  php: [],
   python: ['framework-language'],
-  ruby: ['framework-language', 'security'],
   rust: ['framework-language'],
-  swift: [],
   typescript: ['framework-language'],
 });
 const LEGACY_LANGUAGE_RULE_NAMESPACES = Object.freeze({
-  c: 'cpp',
-  harmonyos: 'arkts',
   javascript: 'typescript',
   go: 'golang',
   golang: 'golang',
-  rails: 'ruby',
 });
 const TARGET_DEFAULT_PROFILE_IDS = Object.freeze({
-  opencode: 'opencode',
 });
 const TARGET_DEFAULT_EXCLUSIONS = Object.freeze({
-  opencode: [
-    {
-      moduleId: 'hooks-runtime',
-      reason: 'OpenCode defaults intentionally exclude hooks-runtime until users opt in.',
-      optInCommand: './install.sh --target opencode --modules hooks-runtime',
-    },
-  ],
 });
 
 function readJson(filePath, label) {

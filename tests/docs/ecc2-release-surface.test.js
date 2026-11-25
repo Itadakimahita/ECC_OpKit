@@ -77,13 +77,6 @@ test('cross-harness architecture doc exists and names core harnesses', () => {
   }
 });
 
-test('Hermes import skill exists and declares sanitization rules', () => {
-  const source = read('skills/hermes-imports/SKILL.md');
-  assert.ok(source.includes('name: hermes-imports'));
-  assert.ok(source.includes('Sanitization Checklist'));
-  assert.ok(source.includes('Do not ship raw workspace exports'));
-});
-
 test('release docs do not contain private local workspace paths', () => {
   const offenders = [];
   for (const filePath of walkMarkdown(releaseDir)) {
@@ -123,21 +116,6 @@ test('announcement drafts avoid live-release claims before publication', () => {
     const source = read(relativePath);
     assert.ok(!/ECC v2\.0\.0-rc\.1 is live\./.test(source), `${relativePath} must not claim rc.1 is live before the release gate completes`);
   }
-});
-
-test('Hermes setup uses release-candidate wording for the rc.1 surface', () => {
-  const source = read('docs/HERMES-SETUP.md');
-  assert.ok(source.includes('Public Release Candidate Scope'));
-  assert.ok(source.includes('ECC v2.0.0-rc.1 documents the Hermes surface'));
-  assert.ok(!source.includes('Public Preview Scope'));
-});
-
-test('Hermes setup cross-links adjacent migration and architecture docs', () => {
-  const source = read('docs/HERMES-SETUP.md');
-  assert.ok(source.includes('HERMES-OPENCLAW-MIGRATION.md'));
-  assert.ok(source.includes('architecture/cross-harness.md'));
-  assert.ok(source.includes('Plan and scaffold migration artifacts'));
-  assert.ok(!source.includes('0.5. Generate and review artifacts with `ecc migrate plan` /'));
 });
 
 test('release docs preserve the ECC/Hermes boundary', () => {
@@ -494,8 +472,6 @@ test('active release identity surfaces use canonical ECC repo URLs', () => {
     'README.md',
     '.codex-plugin/README.md',
     '.codex-plugin/plugin.json',
-    '.opencode/README.md',
-    '.opencode/package.json',
     'docs/business/metrics-and-sponsorship.md',
     'docs/releases/2.0.0-rc.1/quickstart.md',
     'docs/releases/2.0.0-rc.1/x-thread.md',

@@ -427,14 +427,14 @@ async function runTests() {
   if (await test('delegates to the Node installer and preserves dry-run output', async () => {
     await withTempDirs(['install-sh-home-', 'install-sh-project-'], async (homeDir, projectDir) => {
 
-      const result = await run(['--target', 'cursor', '--dry-run', 'typescript'], {
+      const result = await run(['--target', 'claude-project', '--dry-run', 'typescript'], {
         cwd: projectDir,
         homeDir,
       });
 
       assert.strictEqual(result.code, 0, result.stderr);
       assert.ok(result.stdout.includes('Dry-run install plan'));
-      assert.ok(!fs.existsSync(path.join(projectDir, '.cursor', 'hooks.json')));
+      assert.ok(!fs.existsSync(path.join(projectDir, '.claude')));
     });
   })) passed++; else failed++;
 

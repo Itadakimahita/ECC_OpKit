@@ -7,7 +7,6 @@ const path = require('path');
 const repoRoot = path.resolve(__dirname, '..', '..');
 const canonicalPath = path.join(repoRoot, 'skills', 'mcp-dependency-review', 'SKILL.md');
 const codexPath = path.join(repoRoot, '.agents', 'skills', 'mcp-dependency-review', 'SKILL.md');
-const cursorPath = path.join(repoRoot, '.cursor', 'skills', 'mcp-dependency-review', 'SKILL.md');
 
 let passed = 0;
 let failed = 0;
@@ -30,7 +29,6 @@ function body(markdown) {
 
 const canonical = fs.readFileSync(canonicalPath, 'utf8');
 const codex = fs.readFileSync(codexPath, 'utf8');
-const cursor = fs.readFileSync(cursorPath, 'utf8');
 
 console.log('\n=== MCP dependency review skill tests ===\n');
 test('has a focused activation surface for MCP config review', () => {
@@ -93,11 +91,9 @@ test('keeps the external reference optional rather than making it a dependency',
   assert.match(canonical, /does not require it to perform the static review/i);
 });
 
-test('keeps the same review workflow across ECC, Codex, and Cursor surfaces', () => {
+test('keeps the same review workflow across ECC and Codex surfaces', () => {
   assert.strictEqual(body(codex), body(canonical));
-  assert.strictEqual(body(cursor), body(canonical));
   assert.match(codex, /license:\s*MIT/);
-  assert.match(cursor, /origin:\s*ECC/);
 });
 
 console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);

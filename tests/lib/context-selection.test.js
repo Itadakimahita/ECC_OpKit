@@ -263,12 +263,15 @@ const QUERY_CORPUS = [
   ['small Python defect', 'Fix an off-by-one bug in a Python function that indexes a list.', 'agent'],
   ['React keyboard accessibility', 'Fix keyboard navigation and focus handling in our React settings form.', 'auto', 'skill:frontend-a11y'],
   ['PostgreSQL migration review', 'Review a PostgreSQL migration that adds an indexed nullable column without downtime.', 'auto', 'skill:database-migrations'],
-  ['read-only JavaScript review', 'Review this JavaScript pull request for input validation bugs without modifying the code.', 'agent'],
+  // OpKit trim: the competitors that forced a deferral here (springboot-verification, nodejs-keccak256)
+  // are not in the trimmed catalog, so typescript-patterns now clears the auto-selection margin.
+  ['read-only JavaScript review', 'Review this JavaScript pull request for input validation bugs without modifying the code.', 'auto', 'skill:typescript-patterns'],
   ['RAG literature research', 'Find recent papers about retrieval augmented generation and compare their experimental evidence.', 'agent'],
   ['npm release verification', 'Prepare a release checklist for our npm package, verifying the packed archive and test results.', 'agent'],
   ['API documentation', 'Update the API documentation to explain the new pagination response fields and include an example.', 'agent'],
   ['Rust memory diagnosis', 'Diagnose a memory leak in a Rust background worker service.', 'agent'],
-  ['mixed-stack feature', 'Add a React preferences form and a Django endpoint that saves preferences in PostgreSQL.', 'agent'],
+  // OpKit trim: Django is not in the trimmed catalog; FastAPI keeps the mixed-stack ambiguity.
+  ['mixed-stack feature', 'Add a React preferences form and a FastAPI endpoint that saves preferences in PostgreSQL.', 'agent'],
 ];
 
 for (const [label, query, arm, expectedId] of QUERY_CORPUS) {
@@ -292,10 +295,11 @@ for (const [label, query, arm, expectedId] of QUERY_CORPUS) {
 
 test('actual registry: a declined proposal exposes a tier-2 fallback candidate', () => {
   const { tasks } = require('../../docker/context-profiles/ai-corpus.json');
-  const query = tasks.find(item => item.id === 'rbac-middleware').query;
+  // OpKit trim: rbac-middleware lost its fallback with the trimmed catalog; add-column-migration keeps one.
+  const query = tasks.find(item => item.id === 'add-column-migration').query;
   const result = resolveTaskContext({ task: task({ query }), load: false });
   assert.equal(result.reason, 'agent-selection-required');
-  assert.ok(result.fallback, 'expected a tier-2 fallback for the rbac task');
+  assert.ok(result.fallback, 'expected a tier-2 fallback for the add-column-migration task');
   const resolved = resolveDeclinedFallback({ task: task({ query }), load: true }, result);
   assert.equal(resolved.reason, 'auto-selection-fallback');
   assert.deepEqual(resolved.selectedIds, [result.fallback.id]);
@@ -325,7 +329,8 @@ test('actual registry: the routing corpus clears every quality gate with no wron
   assert.deepEqual(result.wrongLoads, []);
   assert.deepEqual(result.breaches, []);
   assert.equal(result.status, 'pass');
-  assert.equal(result.sets.direct.prompts + result.sets.paraphrased.prompts, 77);
+  // OpKit trim: 21 prompts whose expected skills were removed are dropped from the corpus.
+  assert.equal(result.sets.direct.prompts + result.sets.paraphrased.prompts, 56);
 });
 
 test('actual registry: a simple factual question needs no context', () => {
@@ -769,7 +774,8 @@ test('benchmark optimization is discoverable and loads through task context rout
 
 for (const [query, automatic] of [
   ['turn user goal into benchmark', false],
-  ['optimize task completion rate', true],
+  // OpKit trim: with the smaller catalog this phrase falls below the auto margin and goes to the agent.
+  ['optimize task completion rate', false],
   ['compare implementation variants', false],
   ['improve correctness with fixed evaluation', true],
   ['reduce cost per resolved task', true],

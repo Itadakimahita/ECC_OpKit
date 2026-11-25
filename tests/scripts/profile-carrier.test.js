@@ -74,22 +74,6 @@ test('Full carrier keeps explicit exclusions and manual intent', () => withReadO
   assert.ok(carrier.files.every(file => file.skillId !== 'skill:python-patterns'));
 }));
 
-test('every implemented layout remains explicitly native-unobserved', () => withReadOnlyCli(run => {
-  for (const target of ['claude', 'codex', 'cursor', 'opencode', 'pi']) {
-    const { carrier } = payload(run(['carrier', '--target', target, '--json']));
-    assert.equal(carrier.target, target);
-    assert.equal(carrier.status, 'planned');
-    assert.ok(carrier.files.length > 0);
-  }
-}));
-
-test('recognized unsupported target returns inventory without generated files', () => withReadOnlyCli(run => {
-  const { carrier } = payload(run(['carrier', '--target', 'kimi', '--json']));
-  assert.equal(carrier.status, 'unsupported');
-  assert.deepEqual(carrier.files, []);
-  assert.equal(carrier.selectedIds.length, 3);
-}));
-
 test('carrier text and dry-run output preserve read-only and unobserved boundaries', () => withReadOnlyCli(run => {
   const result = run(['carrier', '--dry-run']);
   assert.equal(result.status, 0, result.stderr);

@@ -83,7 +83,7 @@ function runTests() {
       const configPath = path.join(cwd, 'ecc-install.json');
       writeJson(configPath, {
         version: 1,
-        target: 'cursor',
+        target: 'claude-project',
         profile: 'developer',
         modules: ['platform-configs', 'platform-configs'],
         include: ['lang:typescript', 'framework:nextjs', 'lang:typescript'],
@@ -95,32 +95,12 @@ function runTests() {
 
       const config = loadInstallConfig('ecc-install.json', { cwd });
       assert.strictEqual(config.path, configPath);
-      assert.strictEqual(config.target, 'cursor');
+      assert.strictEqual(config.target, 'claude-project');
       assert.strictEqual(config.profileId, 'developer');
       assert.deepStrictEqual(config.moduleIds, ['platform-configs']);
       assert.deepStrictEqual(config.includeComponentIds, ['lang:typescript', 'framework:nextjs']);
       assert.deepStrictEqual(config.excludeComponentIds, ['capability:media']);
       assert.deepStrictEqual(config.options, { includeExamples: false });
-    } finally {
-      cleanup(cwd);
-    }
-  })) passed++; else failed++;
-
-  if (test('accepts a Mistral Vibe skills-only install config', () => {
-    const cwd = createTempDir('install-config-vibe-');
-    try {
-      const configPath = path.join(cwd, 'ecc-install.json');
-      writeJson(configPath, {
-        version: 1,
-        target: 'mistral-vibe',
-        include: ['skill:tdd-workflow'],
-        exclude: ['skill:security-review'],
-      });
-
-      const config = loadInstallConfig(configPath);
-      assert.strictEqual(config.target, 'mistral-vibe');
-      assert.deepStrictEqual(config.includeComponentIds, ['skill:tdd-workflow']);
-      assert.deepStrictEqual(config.excludeComponentIds, ['skill:security-review']);
     } finally {
       cleanup(cwd);
     }
@@ -161,7 +141,7 @@ function runTests() {
 
     try {
       const configPath = path.join(cwd, 'ecc-install.json');
-      const value = { version: 1, target: 'cursor', modules: ['rules-core'] };
+      const value = { version: 1, target: 'claude-project', modules: ['rules-core'] };
       writeJson(configPath, value);
       const expected = loadInstallConfig(configPath);
       const content = `\uFEFF${JSON.stringify(value, null, 2).replace(/\n/g, '\r\n')}\r\n`;

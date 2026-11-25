@@ -60,9 +60,6 @@ jobs:
       - name: Run supply-chain IOC scan
         run: npm run security:ioc-scan
 
-      - name: Verify OpenCode package payload
-        run: node tests/scripts/build-opencode.test.js
-
       - name: Validate version tag
         run: |
           if ! [[ "${REF_NAME}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
@@ -95,16 +92,8 @@ jobs:
             exit 1
           fi
 
-      # pi/core/package.json derives its version from VERSION, so a current
-      # profile also proves pi/core is in sync with the tag.
-      - name: Verify pi/core profile is current
-        run: node scripts/build-pi-core.js --check
-
       - name: Verify release metadata stays in sync
         run: node tests/plugin-manifest.test.js
-
-      - name: Validate Grok marketplace source pin
-        run: node scripts/ci/validate-grok-pin.js --release
 
       - name: Check npm publish state
         id: npm_publish_state

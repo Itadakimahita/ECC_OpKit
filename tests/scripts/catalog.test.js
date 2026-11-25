@@ -71,14 +71,14 @@ function runTests() {
     assert.ok(parsed.components.length > 0);
     assert.ok(parsed.components.every(component => component.family === 'language'));
     assert.ok(parsed.components.some(component => component.id === 'lang:typescript'));
-    assert.ok(parsed.components.every(component => component.id !== 'framework:nextjs'));
+    assert.ok(parsed.components.every(component => component.id !== 'framework:react'));
   })) passed++; else failed++;
 
   if (test('shows a resolved component payload', () => {
-    const result = run(['show', 'framework:nextjs', '--json']);
+    const result = run(['show', 'framework:react', '--json']);
     assert.strictEqual(result.code, 0, result.stderr);
     const parsed = JSON.parse(result.stdout);
-    assert.strictEqual(parsed.id, 'framework:nextjs');
+    assert.strictEqual(parsed.id, 'framework:react');
     assert.strictEqual(parsed.family, 'framework');
     assert.deepStrictEqual(parsed.moduleIds, ['framework-language']);
     assert.ok(Array.isArray(parsed.modules));

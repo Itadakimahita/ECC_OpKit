@@ -65,7 +65,6 @@ Return a short report with:
 
 Use these handoffs when the finding exceeds retrieval-specific review:
 
-- `mle-reviewer` for dataset governance, offline/online evaluation design, model serving, or monitoring;
 - `security-reviewer` for untrusted retrieved content, authorization, sensitive data, prompt injection, or egress;
 - `performance-optimizer` for retrieval latency, index sizing, caching, or load behavior;
 - `docs-lookup` when a vector database, embedding provider, reranker, or evaluation API must be verified against current official documentation.

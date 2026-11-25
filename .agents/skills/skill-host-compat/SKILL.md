@@ -11,14 +11,14 @@ The check is for Codex and Cursor copies, not Claude-only runtime quality.
 ## When to Activate
 
 - Adding or editing a skill under `skills/`
-- Copying a skill into `.agents/skills/` or `.cursor/skills/`
-- A review asks whether a skill is safe to install into Codex or Cursor
+- Copying a skill into `.agents/skills/`
+- A review asks whether a skill is safe to install into Codex
 - CI reports `validate-skill-host-compat.js` findings
 
 ## Core Concepts
 
-Canonical skills live in `skills/`. Codex loads `.agents/skills/`. Cursor loads a
-smaller `.cursor/skills/` subset. CONTRIBUTING documents that sync as manual.
+Canonical skills live in `skills/`. Codex loads `.agents/skills/`. CONTRIBUTING
+documents that sync as manual.
 
 `validate-skills.js` only checks that `SKILL.md` exists and that `name` /
 `description` are usable YAML. `tests/ci/codex-skill-surface.test.js` only

@@ -140,15 +140,6 @@ test('Codex legacy sync docs do not require an unrelated package install', () =>
   assert.ok(!content.includes('npm install && bash scripts/sync-ecc-to-codex.sh'));
 });
 
-test('Kimi docs scope hooks and compatibility to the verified adapter', () => {
-  const content = readConfigureEccDoc('.kimi/README.md');
-
-  assert.ok(content.includes('verified against Kimi Code 0.31.x'));
-  assert.ok(content.includes("newer provider releases are outside this adapter's verified range"));
-  assert.ok(content.includes('does not configure or map provider lifecycle hooks'));
-  assert.ok(!content.includes('Kimi Code 0.31.x does not expose'));
-});
-
 test('Turkish agent instructions report the live catalog counts', () => {
   const content = readConfigureEccDoc('docs/tr/AGENTS.md');
   const agentCount = countEntries('agents', entry => entry.isFile() && entry.name.endsWith('.md'));

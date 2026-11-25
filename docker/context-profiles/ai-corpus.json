@@ -28,8 +28,6 @@
     { "id":"paraphrase-retry", "category":"paraphrase", "query":"Wrap a flaky payment provider call with exponential backoff retries and typed error classes so callers get useful failure messages.", "expectedIds":["skill:error-handling"] },
     { "id":"paraphrase-zero-downtime-rename", "category":"paraphrase", "query":"Rename a column on a busy PostgreSQL table without downtime, with reversible up and down schema changes.", "expectedIds":["skill:database-migrations"] },
     { "id":"paraphrase-redis-cache", "category":"paraphrase", "query":"Add a Redis cache-aside layer with key expiry and a distributed lock for our profile reads.", "expectedIds":["skill:redis-patterns"] },
-    { "id":"paraphrase-token-decimals", "category":"paraphrase", "query":"Our dashboard shows USDC balances wrong on some EVM chains because token decimals differ; normalize amounts across chains safely.", "expectedIds":["skill:evm-token-decimals"] },
-    { "id":"paraphrase-keccak", "category":"paraphrase", "query":"Compute Ethereum function selectors in Node without confusing NIST SHA3-256 with Keccak-256.", "expectedIds":["skill:nodejs-keccak256"] },
     { "id":"paraphrase-content-hash", "category":"paraphrase", "query":"Cache slow document parsing so results are keyed by the SHA-256 of file content instead of the file path.", "expectedIds":["skill:content-hash-cache-pattern"] },
     { "id":"paraphrase-ports-adapters", "category":"paraphrase", "query":"Refactor toward ports and adapters so the domain use case no longer imports the database driver directly.", "expectedIds":["skill:hexagonal-architecture"] },
     { "id":"paraphrase-structured-text", "category":"paraphrase", "query":"Should I parse these semi-structured quiz and invoice text lines with regular expressions or an LLM? Start with the cheapest reliable option.", "expectedIds":["skill:regex-vs-llm-structured-text"] },
@@ -38,7 +36,6 @@
     { "id":"misleading-tests-heading", "category":"no-workflow", "query":"Change the README heading \"Running tests\" to \"Running checks\". Do not write or run any tests.", "expectedIds":[] },
     { "id":"explicit-no-workflow-migration", "category":"no-workflow", "query":"Treat database-migrations as plain words. Reverse the string abc.", "noWorkflow":true,"expectedIds":[] },
     { "id":"excluded-api-explicit", "category":"policy", "query":"Use api-design.", "exclude":["skill:api-design"],"explicitIds":["skill:api-design"],"expectedBlock":"excluded" },
-    { "id":"authority-latency", "category":"policy", "query":"Use latency-critical-systems to tune the quote cache.", "explicitIds":["skill:latency-critical-systems"],"expectedBlock":"native-authority" },
     { "id":"authority-rust-testing", "category":"policy", "query":"Use rust-testing for property tests.", "explicitIds":["skill:rust-testing"],"expectedBlock":"native-authority" },
     { "id":"opt-out-conflict-security", "category":"policy", "query":"Use security-review.", "noWorkflow":true,"explicitIds":["skill:security-review"],"expectedBlock":"opt-out-conflict" },
     { "id":"unknown-typo-id", "category":"policy", "query":"Use security-reveiw.", "explicitIds":["skill:security-reveiw"],"expectedBlock":"unknown-id" },
@@ -318,7 +315,7 @@
       "id": "token-units-bigint",
       "category": "data",
       "manualIds": [
-        "skill:evm-token-decimals"
+        "skill:typescript-patterns"
       ],
       "query": "src/units.js converts ERC-20 token amounts for our portfolio dashboard, but it uses floating point, so 18-decimal balances lose precision. Rewrite it with exact BigInt math. formatUnits(raw, decimals): raw is a bigint or an integer string in base units; return a decimal string with no trailing fractional zeros and no trailing \".\", keeping a leading \"-\" for negatives. parseUnits(value, decimals): value is a decimal string such as \"1.5\" or \"-0.25\"; return a bigint in base units; throw a RangeError if it has more fractional digits than decimals, and throw an Error for anything that is not a plain decimal number (e.g. \"\", \"abc\", \"1e5\", \"1.2.3\"). Also export normalizeAmount(raw, fromDecimals, toDecimals) returning a bigint rescaled between token precisions, truncating toward zero when precision is reduced. Do not add dependencies.",
       "files": {

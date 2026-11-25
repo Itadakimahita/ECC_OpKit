@@ -159,12 +159,6 @@ jobs:
             *) echo "Unsupported package manager: ${{ matrix.pm }}" && exit 1 ;;
           esac
 
-      - name: Verify packed Copilot project installer
-        if: github.event_name == 'pull_request' && matrix.scope == 'full' && matrix.node == '22.x'
-        env:
-          ECC_COPILOT_FIXTURE_REF: ${{ github.event.pull_request.head.sha }}
-        run: node tests/ci/copilot-packed-install.js
-
       - name: Check observer and revision identity
         if: matrix.scope == 'full'
         shell: bash
@@ -194,7 +188,7 @@ jobs:
           if [ "$RUNNER_OS" = "Windows" ]; then
             # These suites assert real elapsed-time limits without the literal
             # "time budget" marker. Retain them in the serial tail, not SKIP.
-            ECC_TEST_SERIAL="$ECC_TEST_SERIAL,hooks/hookify-runtime.test.js,integration/hooks.test.js,hooks/hooks.test.js,ci/agent-payment-x402-seller-guard.test.js,lib/context-profile-sandbox.test.js,hooks/gateguard-fact-force.test.js"
+            ECC_TEST_SERIAL="$ECC_TEST_SERIAL,hooks/hookify-runtime.test.js,integration/hooks.test.js,hooks/hooks.test.js,lib/context-profile-sandbox.test.js,hooks/gateguard-fact-force.test.js"
           fi
           export ECC_TEST_SERIAL
           echo "serial after the pool: $ECC_TEST_SERIAL"
@@ -326,10 +320,6 @@ jobs:
         run: node scripts/ci/validate-install-manifests.js
         continue-on-error: false
 
-      - name: Validate Grok marketplace source pin
-        run: node scripts/ci/validate-grok-pin.js
-        continue-on-error: false
-
       - name: Validate workflow security
         run: node scripts/ci/validate-workflow-security.js
         continue-on-error: false
@@ -353,44 +343,6 @@ jobs:
       - name: Validate no personal paths
         run: node scripts/ci/validate-no-personal-paths.js
         continue-on-error: false
-
-  pi-core:
-    name: Pi Core Profile
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '20.x'
-
-      # Rebuild runs frontmatter validation and the pi/core safety checks
-      # (no callable endpoints, no runtime downloads, no secrets, no absolute
-      # home paths, no symlinks, no duplicate skill names); the diff check
-      # proves the committed profile is up to date.
-      - name: Rebuild pi/core and verify it is up to date
-        run: |
-          node scripts/build-pi-core.js
-          git diff --exit-code pi/core
-
-      - name: Install Pi coding agent CLI
-        run: npm install --global --ignore-scripts --no-audit --no-fund @mariozechner/pi-coding-agent@0.73.1
-
-      # --extension only loads a package's pi.extensions entries; pi/core is a
-      # skills+prompts-only package, so the equivalent --skill/--prompt-template
-      # resource flags are used. The load-test script additionally asserts via
-      # RPC that every curated command actually loaded.
-      - name: Offline load test with the Pi CLI
-        run: |
-          PI_OFFLINE=1 pi --offline --mode rpc --no-session --no-context-files --no-extensions \
-            --skill pi/core/skills --prompt-template pi/core/commands </dev/null >/dev/null
-          node scripts/ci/pi-core-load-test.js
 
   python-tests:
     name: Python Lint, Type Check & Test
@@ -424,36 +376,6 @@ jobs:
         run: |
           python -m pip install 'openai==2.34.0'
           python -m pytest tests/test_provider_tools.py tests/test_atlas_provider.py tests/test_astraflow_provider.py tests/test_resolver.py
-
-  rails-security-fixture:
-    name: Rails Security Skill Fixture
-    runs-on: ubuntu-latest
-    timeout-minutes: 10
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
-        with:
-          persist-credentials: false
-
-      - name: Setup Node.js
-        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
-        with:
-          node-version: '22.x'
-
-      # tests/skills/rails-security.test.js asserts its document claims without Ruby and
-      # skips only the Active Storage cases, so this lane is what executes them.
-      - name: Setup Ruby
-        uses: ruby/setup-ruby@b3aaceaef7e0ee231b499e7b5f49c03fc1d32199 # v1.338.0
-        with:
-          ruby-version: '3.3'
-          bundler-cache: true
-          working-directory: tests/fixtures/rails-security
-
-      - name: Run the Rails security skill test
-        run: node tests/skills/rails-security.test.js
-        env:
-          ECC_RAILS_FIXTURE_REQUIRED: '1'
 
   security:
     name: Security Scan

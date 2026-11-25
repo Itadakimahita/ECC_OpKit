@@ -50,22 +50,7 @@
               "enum": [
                 "claude",
                 "claude-project",
-                "cursor",
-                "antigravity",
-                "antigravity-home",
-                "codex",
-                "copilot",
-                "gemini",
-                "opencode",
-                "codebuddy",
-                "joycode",
-                "qwen",
-                "zed",
-                "hermes",
-                "openclaw",
-                "kimi",
-                "adal",
-                "mistral-vibe"
+                "codex"
               ]
             }
           },

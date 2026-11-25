@@ -449,7 +449,7 @@ function runTests() {
   })) passed++; else failed++;
 
   if (test('merges managed operations across selective installs for enabled and disabled migrations', () => {
-    for (const target of ['claude', 'cursor']) {
+    for (const target of ['claude']) {
       const fixture = createFixture({ target });
       try {
         applyInstallPlan(fixture.plan);

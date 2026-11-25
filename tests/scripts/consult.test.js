@@ -22,13 +22,7 @@ function parseJson(stdout) {
   return JSON.parse(stdout.trim());
 }
 
-function findMatch(payload, componentId) {
-  return payload.matches.find(match => match.componentId === componentId);
-}
 
-function findMatchIndex(payload, componentId) {
-  return payload.matches.findIndex(match => match.componentId === componentId);
-}
 
 function test(name, fn) {
   try {
@@ -91,72 +85,15 @@ function runTests() {
     assert.match(result.stdout, /npx ecc-universal plan --profile minimal --target claude --with capability:security/);
   })) passed++; else failed++;
 
-  if (test('recommends machine-learning component and reviewer agent', () => {
-    const result = run(['mlops', 'training', 'model', 'deployment', '--json']);
-
-    assert.strictEqual(result.status, 0, result.stderr);
-    const payload = parseJson(result.stdout);
-    const capabilityIndex = findMatchIndex(payload, 'capability:machine-learning');
-    const reviewerIndex = findMatchIndex(payload, 'agent:mle-reviewer');
-    assert.ok(capabilityIndex >= 0, 'Should include capability:machine-learning');
-    assert.ok(reviewerIndex >= 0, 'Should include agent:mle-reviewer');
-    assert.ok(capabilityIndex < reviewerIndex,
-      'The workflow capability should rank ahead of the reviewer agent for broad MLE setup queries');
-    assert.ok(findMatch(payload, 'capability:machine-learning').installCommand.includes('--with capability:machine-learning'));
-    assert.ok(!payload.profiles.some(profile => profile.id === 'mle'));
-  })) passed++; else failed++;
-
-  if (test('matches tokenized model review queries without making review a generic alias', () => {
-    const result = run(['model', 'review', '--json']);
-
-    assert.strictEqual(result.status, 0, result.stderr);
-    const payload = parseJson(result.stdout);
-    const capabilityIndex = findMatchIndex(payload, 'capability:machine-learning');
-    const securityIndex = findMatchIndex(payload, 'capability:security');
-    const reviewerIndex = findMatchIndex(payload, 'agent:mle-reviewer');
-    const codeReviewerIndex = findMatchIndex(payload, 'agent:code-reviewer');
-    const reviewer = findMatch(payload, 'agent:mle-reviewer');
-    assert.ok(reviewer, 'Should include agent:mle-reviewer');
-    assert.ok(reviewer.reasons.includes('matched "model"'));
-    assert.ok(!reviewer.reasons.includes('matched "review"'));
-    assert.ok(!reviewer.reasons.includes('fuzzy matched "review"'));
-    assert.ok(capabilityIndex >= 0, 'Should include capability:machine-learning');
-    assert.ok(securityIndex < 0 || capabilityIndex < securityIndex,
-      'Model review queries should prefer the MLE capability over generic security review');
-    assert.ok(codeReviewerIndex < 0 || reviewerIndex < codeReviewerIndex,
-      'Model review queries should prefer the MLE reviewer over generic code review');
-  })) passed++; else failed++;
-
-  if (test('surfaces MLE reviewer for PyTorch model review queries', () => {
-    const result = run(['pytorch', 'model', 'review', '--json']);
-
-    assert.strictEqual(result.status, 0, result.stderr);
-    const payload = parseJson(result.stdout);
-    const reviewer = findMatch(payload, 'agent:mle-reviewer');
-    assert.ok(findMatch(payload, 'capability:machine-learning'), 'Should include capability:machine-learning');
-    assert.ok(reviewer, 'Should include agent:mle-reviewer');
-    assert.ok(reviewer.reasons.includes('matched "pytorch"'));
-  })) passed++; else failed++;
-
-  if (test('does not route generic review queries to MLE components', () => {
-    const result = run(['review', '--json']);
-
-    assert.strictEqual(result.status, 0, result.stderr);
-    const payload = parseJson(result.stdout);
-    assert.ok(!findMatch(payload, 'capability:machine-learning'));
-    assert.ok(!findMatch(payload, 'agent:mle-reviewer'));
-    assert.ok(!payload.profiles.some(profile => profile.id === 'mle'));
-  })) passed++; else failed++;
-
   if (test('works from outside the ECC repository', () => {
     const projectDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-consult-project-'));
     try {
-      const result = run(['nextjs', 'react', '--json'], { cwd: projectDir });
+      const result = run(['react', 'typescript', '--json'], { cwd: projectDir });
 
       assert.strictEqual(result.status, 0, result.stderr);
       const payload = parseJson(result.stdout);
-      assert.strictEqual(payload.matches[0].componentId, 'framework:nextjs');
-      assert.ok(payload.matches.some(match => match.componentId === 'framework:react'));
+      assert.strictEqual(payload.matches[0].componentId, 'framework:react');
+      assert.ok(payload.matches.some(match => match.componentId === 'lang:typescript'));
     } finally {
       fs.rmSync(projectDir, { recursive: true, force: true });
     }
@@ -171,23 +108,6 @@ function runTests() {
     assert.strictEqual(payload.matches.length, 1);
     assert.ok(payload.matches[0].targets.includes('codex'));
     assert.ok(payload.matches[0].installCommand.includes('--target codex'));
-  })) passed++; else failed++;
-
-  if (test('recommends only exact skill installs for Mistral Vibe', () => {
-    const result = run(['test-driven', 'development', '--target', 'mistral-vibe', '--json']);
-
-    assert.strictEqual(result.status, 0, result.stderr);
-    const payload = parseJson(result.stdout);
-    assert.strictEqual(payload.target, 'mistral-vibe');
-    assert.deepStrictEqual(payload.profiles, []);
-    assert.ok(payload.matches.length > 0);
-    assert.ok(payload.matches.every(match => match.family === 'skill'));
-    assert.ok(payload.matches.every(match => match.installCommand.startsWith(
-      'npx ecc-universal install --target mistral-vibe --skills '
-    )));
-    assert.ok(payload.matches.every(match => match.planCommand.startsWith(
-      'npx ecc-universal plan --target mistral-vibe --skills '
-    )));
   })) passed++; else failed++;
 
   if (test('rejects unknown targets', () => {

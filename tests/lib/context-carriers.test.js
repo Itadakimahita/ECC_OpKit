@@ -7,7 +7,6 @@ const os = require('node:os');
 const path = require('node:path');
 const childProcess = require('node:child_process');
 const test = require('node:test');
-const Ajv = require('ajv');
 const registryLibrary = require('../../scripts/lib/context-pack-registry');
 const { compileContextProfile } = require('../../scripts/lib/context-profiles');
 const { digestObject } = require('../../scripts/lib/context-profile-support');
@@ -15,14 +14,11 @@ const { KERNEL, update, withFixture, write } = require('./helpers/context-fixtur
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const MODULE_PATH = path.join(REPO_ROOT, 'scripts/lib/context-carriers.js');
-const SCHEMA_PATH = path.join(REPO_ROOT, 'schemas/context-carrier.schema.json');
 const KERNEL_IDS = KERNEL.map(id => `skill:${id}`);
 const LAYOUTS = {
   claude: { id: 'claude-plugin@1', skillRoot: 'skills', manifestPath: '.claude-plugin/plugin.json' },
   codex: { id: 'codex-plugin@1', skillRoot: 'skills', manifestPath: '.codex-plugin/plugin.json' },
   pi: { id: 'pi-package@1', skillRoot: 'skills', manifestPath: 'package.json' },
-  opencode: { id: 'opencode-project@1', skillRoot: '.opencode/skills', manifestPath: null },
-  cursor: { id: 'cursor-project@1', skillRoot: '.cursor/skills', manifestPath: null },
 };
 
 function plan(options) {
@@ -80,7 +76,7 @@ test('Lean plans only the three selected whole skill trees and never activates a
   assert.match(carrier.limitations.join(' '), /routed.*(?:unimplemented|not implemented)/i);
 }));
 
-test('all five source-backed layouts preserve exact selected native directories', () => withFixture(root => {
+test('all three source-backed layouts preserve exact selected native directories', () => withFixture(root => {
   for (const [target, layout] of Object.entries(LAYOUTS)) {
     const carrier = plan({ repoRoot: root, target });
     assert.deepEqual(carrier.layout, layout);
@@ -303,51 +299,13 @@ test('read-only planning does not write files, execute processes, or inspect use
   assert.deepEqual(snapshot(root), before);
 }));
 
-test('published carrier schema validates outputs and rejects extra or capability-bearing fields', () => withFixture(root => {
-  const carrier = plan({ repoRoot: root });
-  const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
-  const validate = new Ajv({ allErrors: true, strict: true }).compile(schema);
-  assert.equal(validate(carrier), true, JSON.stringify(validate.errors));
-  assert.equal(validate({ ...carrier, extra: true }), false);
-  assert.equal(validate({ ...carrier, active: true }), false);
-  assert.equal(validate({ ...carrier, nativeSupport: 'verified' }), false);
-  assert.equal(validate({ ...carrier, files: [{ ...carrier.files[0], hooks: true }] }), false);
-  assert.equal(validate({ ...carrier, files: [{ kind: 'generated', destinationPath: 'hooks/hooks.json',
-    content: '{}', encoding: 'utf8', digest: sha256('{}'), bytes: 2 }] }), false);
-  const unsupported = plan({ repoRoot: root, target: 'gemini' });
-  assert.equal(validate(unsupported), true, JSON.stringify(validate.errors));
-  assert.equal(validate({ ...unsupported, files: carrier.files }), false);
-}));
-
 test('real canonical inventory projects every selected bundled resource without relying on mirrors', () => {
   const registry = registryLibrary.loadContextRegistry({ repoRoot: REPO_ROOT });
-  const renamed = [
-    ['scientific-db-pubmed-database', 'pubmed-database'],
-    ['scientific-db-uspto-database', 'uspto-database'],
-    ['scientific-pkg-gget', 'gget'],
-    ['scientific-thinking-literature-review', 'literature-review'],
-    ['scientific-thinking-scholar-evaluation', 'scholar-evaluation'],
-  ];
   for (const target of Object.keys(LAYOUTS)) {
     const carrier = plan({ repoRoot: REPO_ROOT, profileId: 'full@1', target });
     assert.deepEqual(carrier.selectedIds, registry.entries.map(entry => entry.id));
     assert.equal(carrier.files.filter(file => file.kind === 'copy').length,
       registry.entries.reduce((count, entry) => count + entry.resources.length, 0));
     assert.ok(carrier.files.every(file => file.kind !== 'copy' || file.sourcePath.startsWith('skills/')));
-    for (const [name, previousName] of renamed) {
-      const entry = registry.entries.find(value => value.id === `skill:${name}`);
-      assert.ok(entry, `missing renamed scientific skill: ${name}`);
-      const copies = carrier.files.filter(file => file.kind === 'copy' && file.skillId === entry.id);
-      assert.deepEqual(copies.map(({ sourcePath, destinationPath, digest, bytes }) => (
-        { sourcePath, destinationPath, digest, bytes }
-      )), entry.resources.map(resource => ({
-        sourcePath: resource.path,
-        destinationPath: `${LAYOUTS[target].skillRoot}/${name}/${resource.path.slice(`skills/${name}/`.length)}`,
-        digest: resource.digest, bytes: resource.bytes,
-      })));
-      assert.equal(carrier.files.some(file => file.destinationPath.startsWith(
-        `${LAYOUTS[target].skillRoot}/${previousName}/`
-      )), false, `old native folder must not be duplicated: ${target}/${previousName}`);
-    }
   }
 });

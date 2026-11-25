@@ -19,7 +19,6 @@ Pull these ECC-native skills into the workflow when relevant:
 - `tdd-workflow` when the right fix needs regression coverage
 - `security-review` when secrets, auth, or external inputs are involved
 - `github-ops` when the task depends on CI runs, PR state, or release status
-- `knowledge-ops` when the verified outcome needs to be captured into durable project context
 
 ## When to Use
 

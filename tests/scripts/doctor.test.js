@@ -146,58 +146,6 @@ function runTests() {
     }
   })) passed++; else failed++;
 
-  if (test('reports issues and exits 1 for unhealthy installs', () => {
-    const homeDir = createTempDir('doctor-home-');
-    const projectRoot = createTempDir('doctor-project-');
-
-    try {
-      const targetRoot = path.join(projectRoot, '.cursor');
-      const statePath = path.join(targetRoot, 'ecc-install-state.json');
-      fs.mkdirSync(targetRoot, { recursive: true });
-
-      writeState(statePath, {
-        adapter: { id: 'cursor-project', target: 'cursor', kind: 'project' },
-        targetRoot,
-        installStatePath: statePath,
-        request: {
-          profile: null,
-          modules: ['platform-configs'],
-          legacyLanguages: [],
-          legacyMode: false,
-        },
-        resolution: {
-          selectedModules: ['platform-configs'],
-          skippedModules: [],
-        },
-        operations: [
-          {
-            kind: 'copy-file',
-            moduleId: 'platform-configs',
-            sourceRelativePath: '.cursor/hooks.json',
-            destinationPath: path.join(targetRoot, 'hooks.json'),
-            strategy: 'sync-root-children',
-            ownership: 'managed',
-            scaffoldOnly: false,
-          },
-        ],
-        source: {
-          repoVersion: CURRENT_PACKAGE_VERSION,
-          repoCommit: 'abc123',
-          manifestVersion: CURRENT_MANIFEST_VERSION,
-        },
-      });
-
-      const result = run(['--target', 'cursor', '--json'], { cwd: projectRoot, homeDir });
-      assert.strictEqual(result.code, 1);
-      const parsed = JSON.parse(result.stdout);
-      assert.strictEqual(parsed.summary.errorCount, 1);
-      assert.ok(parsed.results[0].issues.some(issue => issue.code === 'missing-managed-files'));
-    } finally {
-      cleanup(homeDir);
-      cleanup(projectRoot);
-    }
-  })) passed++; else failed++;
-
   console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
   process.exit(failed > 0 ? 1 : 0);
 }

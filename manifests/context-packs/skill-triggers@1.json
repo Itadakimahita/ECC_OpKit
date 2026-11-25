@@ -1,7 +1,7 @@
 {
   "coverage": {
-    "skills": 328,
-    "withTriggers": 43
+    "skills": 138,
+    "withTriggers": 33
   },
   "generatedAt": "2026-10-30T00:01:34.569Z",
   "id": "skill-triggers@1",
@@ -10,16 +10,9 @@
     "id": "hand-seeded",
     "source": "manual-curation-pending-regeneration"
   },
-  "registryDigest": "e1ae66afd0ca1437da7cb799d413a74a8f5171f285074c9de8bbe2630dc02265",
+  "registryDigest": "511a28b149821e8ae50e0e00e4910ab9da81f559e8f71a5411d160504cbd23fd",
   "schemaVersion": 1,
   "triggers": {
-    "skill:agent-runtime-gateway-smoke-test": [
-      "test local agent gateway",
-      "remote sandbox callback smoke test",
-      "agent task stuck after dispatch",
-      "verify gateway tunnel",
-      "restore web api after agent test"
-    ],
     "skill:api-connector-builder": [
       "add api integration",
       "new provider connector",
@@ -122,24 +115,6 @@
       "ui audit",
       "design system bootstrap"
     ],
-    "skill:django-patterns": [
-      "django orm",
-      "drf api",
-      "django rest framework",
-      "django caching",
-      "django signals",
-      "django middleware"
-    ],
-    "skill:django-security": [
-      "django authentication",
-      "csrf protection",
-      "sql injection prevention",
-      "xss prevention",
-      "django deployment security",
-      "role based access control",
-      "authorization middleware",
-      "permissions checks"
-    ],
     "skill:docker-patterns": [
       "dockerfile review",
       "docker compose setup",
@@ -165,12 +140,6 @@
       "error codes",
       "config validation"
     ],
-    "skill:evm-token-decimals": [
-      "token decimals",
-      "wei conversion",
-      "erc20 balance off",
-      "bridge token precision"
-    ],
     "skill:frontend-a11y": [
       "aria attributes",
       "screen reader support",
@@ -188,27 +157,6 @@
       "clean up commits",
       "pull request cleanup",
       "git history tidy"
-    ],
-    "skill:godot-patterns": [
-      "godot gdscript patterns",
-      "godot 4 best practices",
-      "gdscript static typing",
-      "godot signals vs direct calls",
-      "godot scene tree design",
-      "godot autoload singleton",
-      "godot resource data",
-      "gdscript style guide",
-      "godot node freed after await"
-    ],
-    "skill:godot-testing": [
-      "godot unit tests",
-      "gdunit4",
-      "gut godot tests",
-      "godot headless tests",
-      "test gdscript",
-      "godot ci tests",
-      "godot scene runner test",
-      "godot check-only"
     ],
     "skill:hexagonal-architecture": [
       "ports and adapters",
@@ -229,14 +177,6 @@
       "regression fix",
       "reproduce bug",
       "defect repair"
-    ],
-    "skill:platform-factory": [
-      "platform factory",
-      "pf freeze",
-      "pf build",
-      "reproducible oci image",
-      "oci sbom provenance",
-      "microvm container"
     ],
     "skill:postgres-patterns": [
       "slow postgres query",
@@ -291,15 +231,6 @@
       "rust concurrency",
       "idiomatic rust"
     ],
-    "skill:scientific-db-openalex-database": [
-      "openalex api",
-      "cross disciplinary literature search",
-      "look up paper by doi",
-      "resolve pmid to metadata",
-      "find open access copy",
-      "citation count lookup",
-      "verify a citation exists"
-    ],
     "skill:search-first": [
       "find existing library",
       "npm package research",
@@ -328,13 +259,6 @@
       "agentshield scan",
       "hook configuration audit",
       "settings json security"
-    ],
-    "skill:short-video-distribution": [
-      "publish video to tiktok youtube reels",
-      "cross-post short video",
-      "schedule short-form video",
-      "upload reel and short",
-      "video captions per platform"
     ],
     "skill:tdd-workflow": [
       "write test first",
@@ -365,18 +289,6 @@
       "build lint test coverage",
       "before creating a pr"
     ],
-    "skill:yoruba-localization-testing": [
-      "yoruba localization testing",
-      "yoruba english bilingual interface",
-      "yoruba tone marks",
-      "yoruba diacritics",
-      "yoruba unicode normalization",
-      "yoruba translation fallback",
-      "yoruba screen reader language",
-      "yoruba bilingual ui",
-      "test yoruba character preservation",
-      "yoruba accents not rendering"
-    ],
     "skill:ui-canvas": [
       "preview the component before committing",
       "show me a mockup in the browser",
@@ -388,5 +300,5 @@
       "lovable style visual editing"
     ]
   },
-  "triggersDigest": "b00be40af04a07aec545fb55cd23ca3fce77d0613ca392a3177bbc2f0238fc9c"
+  "triggersDigest": "f2ceff9e2ff9ed3b271ef2592340bb497ff95dcd4b1d03730d47cbe3c53899cb"
 }

@@ -68,15 +68,6 @@ test('state survives source removal and bundled bytes are preserved', () => fixt
   assert.equal(store().getStoreStatus({ stateRoot: options.stateRoot }).revision, 1);
 }));
 
-test('arbitrary existing directories, unsupported targets, and external carriers are refused', () => fixture((options, parent) => {
-  fs.mkdirSync(options.stateRoot);
-  fs.writeFileSync(path.join(options.stateRoot, 'sentinel'), 'user');
-  assert.throws(() => store().applyStore(options), /owned|managed|empty/i);
-  assert.equal(fs.readFileSync(path.join(options.stateRoot, 'sentinel'), 'utf8'), 'user');
-  assert.throws(() => store().applyStore({ ...options, stateRoot: path.join(parent, 'other'), target: 'gemini' }), /unsupported/i);
-  assert.throws(() => store().applyStore({ ...options, carrier: {} }), /unknown/i);
-}));
-
 for (const corruption of ['modified', 'extra', 'symlink', 'hardlink']) {
   test(`managed ${corruption} files block status, apply, and rollback`, context => fixture((options, parent) => {
     store().applyStore({ ...options, profileId: 'full@1' });

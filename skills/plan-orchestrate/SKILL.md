@@ -18,7 +18,7 @@ Bridge a plan document to the current ECC slash-command surface by emitting one 
 Skip when:
 - The work is one ad-hoc step → run the appropriate slash command directly (see the catalogue below).
 - The plan is unreadable or empty. Lack of explicit numbering alone is not a skip condition — see the "No clear steps" edge case below.
-- The plan should run autonomously in the background → prefer `dmux-workflows` or the native `workflows/*.workflow.js` scripts instead.
+- The plan should run autonomously in the background → prefer the native `workflows/*.workflow.js` scripts instead.
 
 ## Inputs
 

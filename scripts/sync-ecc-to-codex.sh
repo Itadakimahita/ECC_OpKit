@@ -550,24 +550,6 @@ Use \`$PROMPTS_DEST/ecc-rules-pack-common.md\`.
 Language-specific guidance overrides common rules when they conflict.
 EOF
 
-write_extension_prompt "ecc-rules-pack-swift.md" <<EOF
-# ECC Rule Pack: swift (optional)
-
-Apply ECC common rules plus Swift-specific rules for this session.
-
-## Common
-Use \`$PROMPTS_DEST/ecc-rules-pack-common.md\`.
-
-## Swift Extensions
-- \`$CURSOR_RULES_DIR/swift-coding-style.md\`
-- \`$CURSOR_RULES_DIR/swift-hooks.md\`
-- \`$CURSOR_RULES_DIR/swift-patterns.md\`
-- \`$CURSOR_RULES_DIR/swift-security.md\`
-- \`$CURSOR_RULES_DIR/swift-testing.md\`
-
-Language-specific guidance overrides common rules when they conflict.
-EOF
-
 if [[ "$MODE" == "apply" ]]; then
   sort -u "$extension_manifest" -o "$extension_manifest"
 fi
