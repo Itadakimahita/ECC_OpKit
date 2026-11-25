@@ -15,9 +15,9 @@ const tests = [
     const output = JSON.parse(result.stdout);
     assert.strictEqual(output.status, 'success');
     assert.strictEqual(output.profileCount, 2);
-    assert.ok(output.targetCount >= 15);
+    assert.ok(output.targetCount >= 4);
     assert.strictEqual(output.projectionCount, output.profileCount * output.targetCount);
-    assert.ok(output.skillCount >= 139);
+    assert.ok(output.skillCount >= 138);
     assert.strictEqual(output.nativeCertification, 'unobserved');
   }],
   ['rejects unknown validator flags', () => {

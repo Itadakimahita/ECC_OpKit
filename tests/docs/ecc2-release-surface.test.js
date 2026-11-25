@@ -118,21 +118,6 @@ test('announcement drafts avoid live-release claims before publication', () => {
   }
 });
 
-test('Hermes setup uses release-candidate wording for the rc.1 surface', () => {
-  const source = read('docs/HERMES-SETUP.md');
-  assert.ok(source.includes('Public Release Candidate Scope'));
-  assert.ok(source.includes('ECC v2.0.0-rc.1 documents the Hermes surface'));
-  assert.ok(!source.includes('Public Preview Scope'));
-});
-
-test('Hermes setup cross-links adjacent migration and architecture docs', () => {
-  const source = read('docs/HERMES-SETUP.md');
-  assert.ok(source.includes('HERMES-OPENCLAW-MIGRATION.md'));
-  assert.ok(source.includes('architecture/cross-harness.md'));
-  assert.ok(source.includes('Plan and scaffold migration artifacts'));
-  assert.ok(!source.includes('0.5. Generate and review artifacts with `ecc migrate plan` /'));
-});
-
 test('release docs preserve the ECC/Hermes boundary', () => {
   const releaseNotes = read('docs/releases/2.0.0-rc.1/release-notes.md');
   assert.ok(releaseNotes.includes('ECC is the reusable substrate'));
@@ -487,8 +472,6 @@ test('active release identity surfaces use canonical ECC repo URLs', () => {
     'README.md',
     '.codex-plugin/README.md',
     '.codex-plugin/plugin.json',
-    '.opencode/README.md',
-    '.opencode/package.json',
     'docs/business/metrics-and-sponsorship.md',
     'docs/releases/2.0.0-rc.1/quickstart.md',
     'docs/releases/2.0.0-rc.1/x-thread.md',

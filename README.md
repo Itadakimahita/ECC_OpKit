@@ -142,12 +142,12 @@ Instead of rebuilding that process in every prompt, you install it once and make
 
 ECC is MIT-licensed open source. It works best with Claude Code today, has native Codex and Qoder plugin paths, and provides capability-limited adapters for Cursor, OpenCode, Gemini, Zed, GitHub Copilot, Antigravity, Qwen, and other harnesses. See the [support status matrix](#platform-support) before assuming feature parity.
 
-Access to 39 agents, 139 skills, and 72 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
+Access to 39 agents, 138 skills, and 72 legacy command shims, plus hooks, rules, memory, continuous learning, and AgentShield security scanning. The agents are specialized for planning, review, build repair, security, architecture, and domain work.
 
 | Included         |       Count | What it gives you                                                                    |
 | ---------------- | ----------: | ------------------------------------------------------------------------------------ |
 | Agents           |   39 agents | Planning, review, build repair, security, architecture, and domain work              |
-| Skills           |  139 skills | TDD, research, security, docs, frontend, data, ML, operations, and more              |
+| Skills           |  138 skills | TDD, research, security, docs, frontend, data, ML, operations, and more              |
 | Commands         | 72 commands | Convenient entry points while ECC moves to a skills-first surface                    |
 | Hooks and memory |     Runtime | Enforcement, session summaries, continuous learning, instincts, and context controls |
 | Rules            |   Selective | Always-loaded standards you choose by language or project                            |
@@ -864,7 +864,7 @@ Stable graduation of the 2.0 line: control-pane substrate, worktree lifecycle se
 ```text
 ECC/
 |-- agents/           # 39 specialized subagents for delegation
-|-- skills/           # 139 reusable workflows loaded on demand
+|-- skills/           # 138 reusable workflows loaded on demand
 |-- commands/         # 72 maintained slash-command shims
 |-- rules/            # opt-in common and language standards
 |-- hooks/            # runtime automation and enforcement

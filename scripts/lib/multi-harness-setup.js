@@ -20,7 +20,7 @@ function normalizeGuidedInstallRequest(input = {}) {
   const { normalizeHarnessSelection } = catalogHelpers();
   const harnesses = normalizeHarnessSelection(input.harnesses || []);
   if (harnesses.length === 0) {
-    throw new Error('Choose at least one guided harness: Claude, Codex, or Kimi.');
+    throw new Error('Choose at least one guided harness: Claude or Codex.');
   }
 
   const includesClaude = harnesses.includes('claude');

@@ -164,7 +164,7 @@ Examples:
   ecc setup --mode claude-plugin --scope user --hooks standard --yes
   ecc welcome
   ecc install --guided
-  ecc install --guided --harness claude --harness codex --harness kimi
+  ecc install --guided --harness claude --harness codex
   ecc typescript
   ecc install --profile developer --target claude
   ecc plan --profile core --target cursor

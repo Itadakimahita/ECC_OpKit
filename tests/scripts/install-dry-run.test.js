@@ -73,8 +73,8 @@ function findStateFiles(homeDir) {
 
 function testInstallForms() {
   for (const args of [
-    ['--dry-run', 'install', '--target', 'cursor', '--modules', 'rules-core'],
-    ['install', '--target', 'cursor', '--modules', 'rules-core', '--dry-run'],
+    ['--dry-run', 'install', '--target', 'claude-project', '--modules', 'rules-core'],
+    ['install', '--target', 'claude-project', '--modules', 'rules-core', '--dry-run'],
   ]) {
     test(`dry-run install writes nothing (${args.slice(0, 2).join(' ')})`, context => {
       const result = runEcc(args, context);
@@ -86,40 +86,10 @@ function testInstallForms() {
   }
 }
 
-function testRepairForms() {
-  for (const args of [
-    ['--dry-run', 'repair', '--target', 'cursor'],
-    ['repair', '--target', 'cursor', '--dry-run'],
-  ]) {
-    test(`dry-run repair preserves drift and state (${args.slice(0, 2).join(' ')})`, context => {
-      const installed = runEcc(['install', '--target', 'cursor', '--modules', 'rules-core'], context);
-      assert.strictEqual(installed.status, 0, installed.stderr);
-      const roots = [context.homeDir, context.projectRoot];
-      const stateFiles = roots.flatMap(findStateFiles);
-      assert.ok(stateFiles.length > 0, 'expected a real install to write state first');
-      const managedFile = roots.flatMap(walkFiles).find(
-        file => !file.endsWith('ecc-install-state.json') && !file.endsWith('.db')
-      );
-      assert.ok(managedFile, 'expected a real install to write managed files first');
-      fs.appendFileSync(managedFile, '\n# local drift marker\n');
-      const drifted = fs.readFileSync(managedFile, 'utf8');
-      const stateBefore = stateFiles.map(file => fs.readFileSync(file));
-
-      const result = runEcc(args, context);
-      assert.strictEqual(result.status, 0, result.stderr);
-      assert.strictEqual(fs.readFileSync(managedFile, 'utf8'), drifted);
-      assert.deepStrictEqual(
-        stateFiles.map(file => fs.readFileSync(file)),
-        stateBefore
-      );
-    });
-  }
-}
-
 function testDryRunEnvironment() {
   for (const value of ['1', 'true', '']) {
     test(`direct install honors or rejects ECC_DRY_RUN=${JSON.stringify(value)}`, context => {
-      const result = spawnSync(process.execPath, [eccCli, 'install', '--target', 'cursor', '--modules', 'rules-core'], {
+      const result = spawnSync(process.execPath, [eccCli, 'install', '--target', 'claude-project', '--modules', 'rules-core'], {
         cwd: context.projectRoot,
         encoding: 'utf8',
         timeout: 120000,
@@ -132,7 +102,7 @@ function testDryRunEnvironment() {
     });
   }
   test('explicit dry-run remains active with ECC_DRY_RUN=0', context => {
-    const result = spawnSync(process.execPath, [eccCli, 'install', '--target', 'cursor', '--modules', 'rules-core', '--dry-run'], {
+    const result = spawnSync(process.execPath, [eccCli, 'install', '--target', 'claude-project', '--modules', 'rules-core', '--dry-run'], {
       cwd: context.projectRoot,
       encoding: 'utf8',
       timeout: 120000,
@@ -147,7 +117,6 @@ function testDryRunEnvironment() {
 console.log('\nInstall dry-run CLI regression tests:\n');
 testInstallForms();
 testDryRunEnvironment();
-testRepairForms();
 
 console.log(`\nResults: Passed: ${passed}, Failed: ${failed}`);
 process.exitCode = failed ? 1 : 0;

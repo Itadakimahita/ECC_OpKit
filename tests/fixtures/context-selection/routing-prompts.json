@@ -228,7 +228,6 @@
     {
       "query": "the numbers in the dashboard disagree with what finance has",
       "expected": [
-        "skill:benchmark-methodology",
         "skill:production-audit"
       ]
     },
@@ -347,7 +346,6 @@
     {
       "query": "we cannot tell which change caused the slowdown",
       "expected": [
-        "skill:benchmark-methodology",
         "skill:production-audit"
       ]
     },

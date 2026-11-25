@@ -11,14 +11,6 @@
         "workflow-quality"
       ]
     },
-    "opencode": {
-      "description": "Default OpenCode setup with commands, platform configs, and quality workflow support. It intentionally excludes hooks-runtime; opt in with --modules hooks-runtime.",
-      "modules": [
-        "commands-core",
-        "platform-configs",
-        "workflow-quality"
-      ]
-    },
     "core": {
       "description": "Minimal harness baseline with commands, hooks, platform configs, and quality workflow support.",
       "modules": [
@@ -93,7 +85,6 @@
         "agentic-patterns",
         "devops-infra",
         "documentation-context",
-        "hermes-hooks",
         "documentation-change-impact",
         "documentation-module-governance",
         "documentation-test-regression",

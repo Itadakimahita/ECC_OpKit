@@ -191,7 +191,7 @@ test('the real registry closes: every planned script resolves inside its carrier
   const { receipt } = realRegistryRun();
   assert.equal(receipt.status, 'success');
   assert.deepEqual(receipt.failures, []);
-  assert.equal(receipt.layouts.length, 5);
+  assert.equal(receipt.layouts.length, 3);
   assert.deepEqual(receipt.profiles, ['lean@1', 'full@1']);
   assert.ok(receipt.scriptCount > 0, 'expected planned JavaScript files to inspect');
   assert.ok(receipt.resolvedCount > 0, 'expected at least one resolved relative specifier');

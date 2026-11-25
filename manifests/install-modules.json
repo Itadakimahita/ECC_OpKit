@@ -10,19 +10,7 @@
       ],
       "targets": [
         "claude",
-        "claude-project",
-        "cursor",
-        "copilot",
-        "antigravity",
-        "antigravity-home",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "claude-project"
       ],
       "dependencies": [],
       "defaultInstall": true,
@@ -41,19 +29,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [],
       "defaultInstall": true,
@@ -77,20 +53,7 @@
       ],
       "targets": [
         "claude",
-        "claude-project",
-        "cursor",
-        "copilot",
-        "antigravity",
-        "antigravity-home",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "claude-project"
       ],
       "dependencies": [
         "shared-script-utils"
@@ -110,33 +73,11 @@
       ],
       "targets": [
         "claude",
-        "claude-project",
-        "cursor",
-        "opencode",
-        "codebuddy",
-        "antigravity",
-        "antigravity-home"
+        "claude-project"
       ],
       "dependencies": [],
       "defaultInstall": true,
       "cost": "medium",
-      "stability": "stable"
-    },
-    {
-      "id": "hermes-hooks",
-      "kind": "hooks",
-      "description": "Hermes-native guard hooks (config protection, console.log warning) plus install guide.",
-      "paths": [
-        "hooks/hermes",
-        "docs/HERMES-HOOKS.md"
-      ],
-      "targets": [
-        "hermes",
-        "openclaw"
-      ],
-      "dependencies": [],
-      "defaultInstall": true,
-      "cost": "light",
       "stability": "stable"
     },
     {
@@ -147,38 +88,15 @@
         ".claude-plugin",
         ".codex",
         ".cursor",
-        ".gemini",
-        ".opencode",
-        ".pi",
-        ".qwen",
-        ".zed",
         "mcp-configs",
         "scripts/auto-update.js",
         "scripts/setup-package-manager.js",
-        "scripts/lib/package-manager.js",
-        ".hermes",
-        ".openclaw",
-        ".kimi",
-        ".adal"
+        "scripts/lib/package-manager.js"
       ],
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "copilot",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "gemini",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "shared-script-utils"
@@ -225,16 +143,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "rules-core",
@@ -264,16 +173,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -292,21 +192,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "gemini",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -325,19 +211,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality"
@@ -401,20 +275,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "skill-unified-memory"
@@ -433,19 +294,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality"
@@ -462,22 +311,12 @@
         "skills/benchmark-optimization-loop",
         "skills/parallel-execution-optimizer",
         "skills/agent-eval",
-        "skills/benchmark",
-        "skills/benchmark-methodology"
+        "skills/benchmark"
       ],
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality",
@@ -504,16 +343,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality"
@@ -533,16 +363,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -561,16 +382,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -594,16 +406,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -622,14 +425,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -652,8 +448,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "codex",
-        "opencode"
+        "codex"
       ],
       "dependencies": [
         "commands-core",
@@ -721,16 +516,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -752,16 +538,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "platform-configs"
@@ -988,19 +765,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality"
@@ -1019,14 +784,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "codex",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed"
+        "codex"
       ],
       "dependencies": [
         "documentation-context",
@@ -1049,19 +807,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "antigravity-home",
-        "codex",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [
         "workflow-quality"
@@ -1080,19 +826,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "antigravity",
-        "codex",
-        "copilot",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal"
+        "codex"
       ],
       "dependencies": [],
       "defaultInstall": false,
@@ -1111,21 +845,7 @@
       "targets": [
         "claude",
         "claude-project",
-        "cursor",
-        "copilot",
-        "antigravity",
-        "antigravity-home",
-        "opencode",
-        "codebuddy",
-        "joycode",
-        "qwen",
-        "zed",
-        "hermes",
-        "openclaw",
-        "kimi",
-        "adal",
-        "codex",
-        "gemini"
+        "codex"
       ],
       "dependencies": [],
       "defaultInstall": false,

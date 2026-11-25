@@ -11,7 +11,6 @@ const { resolveInstallPlan } = require('../../scripts/lib/install-manifests');
 const ROOT = path.resolve(__dirname, '../..');
 const CANONICAL = path.join(ROOT, 'skills', 'docs-governance');
 const CODEX_MIRROR = path.join(ROOT, '.agents', 'skills', 'docs-governance');
-const PI_CORE = path.join(ROOT, 'pi', 'core', 'skills', 'docs-governance', 'SKILL.md');
 const MIRRORED_FILES = [
   'SKILL.md',
   'references/artifact-role-contract.md',
@@ -43,8 +42,8 @@ function test(name, fn) {
 
 console.log('\n=== Documentation governance surface tests ===\n');
 
-test('Codex and Pi distribution files match the canonical skill', () => {
-  for (const mirrorRoot of [CODEX_MIRROR, path.dirname(PI_CORE)]) {
+test('Codex distribution files match the canonical skill', () => {
+  for (const mirrorRoot of [CODEX_MIRROR]) {
     for (const relativePath of MIRRORED_FILES) {
       const canonical = fs.readFileSync(path.join(CANONICAL, relativePath), 'utf8');
       const mirror = fs.readFileSync(path.join(mirrorRoot, relativePath), 'utf8');
@@ -60,12 +59,6 @@ test('router destinations exist on current main', () => {
       `docs-governance routes to missing skill: ${skill}`
     );
   }
-});
-
-test('Pi router labels destinations excluded from standalone Pi core', () => {
-  const piSkill = fs.readFileSync(PI_CORE, 'utf8');
-  assert.match(piSkill, /ai-regression-testing` \(install separately in standalone Pi core\)/);
-  assert.match(piSkill, /loop-design-check` \(install separately in standalone Pi core\)/);
 });
 
 test('focused surface excludes mutating archive and pre-commit tools', () => {

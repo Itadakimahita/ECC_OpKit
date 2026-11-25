@@ -62,7 +62,7 @@ function planningDependencyClosure(entry) {
 function createPlan(createManifestInstallPlan, homeDir) {
   return createManifestInstallPlan({
     sourceRoot: REPO_ROOT,
-    target: 'antigravity',
+    target: 'claude-project',
     moduleIds: ['agents-core'],
     homeDir,
   });
@@ -77,26 +77,6 @@ function runTests() {
     assert.ok(closure.includes('scripts/lib/install/plan.js'));
     assert.ok(!closure.includes('scripts/lib/install/apply.js'));
     assert.ok(!closure.includes('scripts/lib/install/antigravity-agent.js'));
-  })) passed++; else failed++;
-
-  if (test('does not load js-yaml while generating a real manifest plan', () => {
-    const tempDir = fs.mkdtempSync(path.join(os.tmpdir(), 'ecc-pure-plan-load-'));
-    const loaded = [];
-    const originalLoad = Module._load;
-    try {
-      Module._load = function(request, parent, isMain) {
-        loaded.push(request);
-        return originalLoad.call(this, request, parent, isMain);
-      };
-      const { createManifestInstallPlan } = require(PLAN_ENTRY);
-      const plan = createPlan(createManifestInstallPlan, tempDir);
-      assert.ok(plan.operations.length > 0);
-      assert.ok(plan.operations.some(operation => operation.contentTransform === 'antigravity-agent-frontmatter'));
-      assert.deepStrictEqual(loaded.filter(request => request === 'js-yaml' || request.startsWith('js-yaml/')), []);
-    } finally {
-      Module._load = originalLoad;
-      fs.rmSync(tempDir, { recursive: true, force: true });
-    }
   })) passed++; else failed++;
 
   if (test('preserves the install-executor manifest-plan contract exactly', () => {

@@ -21,8 +21,6 @@ const LAYOUTS = {
   claude: { id: 'claude-plugin@1', skillRoot: 'skills', manifestPath: '.claude-plugin/plugin.json' },
   codex: { id: 'codex-plugin@1', skillRoot: 'skills', manifestPath: '.codex-plugin/plugin.json' },
   pi: { id: 'pi-package@1', skillRoot: 'skills', manifestPath: 'package.json' },
-  opencode: { id: 'opencode-project@1', skillRoot: '.opencode/skills', manifestPath: null },
-  cursor: { id: 'cursor-project@1', skillRoot: '.cursor/skills', manifestPath: null },
 };
 const MANIFESTS = {
   claude: { name: 'ecc-context-carrier', skills: ['./skills/'] },

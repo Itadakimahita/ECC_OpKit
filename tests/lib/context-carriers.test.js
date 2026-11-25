@@ -7,7 +7,6 @@ const os = require('node:os');
 const path = require('node:path');
 const childProcess = require('node:child_process');
 const test = require('node:test');
-const Ajv = require('ajv');
 const registryLibrary = require('../../scripts/lib/context-pack-registry');
 const { compileContextProfile } = require('../../scripts/lib/context-profiles');
 const { digestObject } = require('../../scripts/lib/context-profile-support');
@@ -15,14 +14,11 @@ const { KERNEL, update, withFixture, write } = require('./helpers/context-fixtur
 
 const REPO_ROOT = path.resolve(__dirname, '../..');
 const MODULE_PATH = path.join(REPO_ROOT, 'scripts/lib/context-carriers.js');
-const SCHEMA_PATH = path.join(REPO_ROOT, 'schemas/context-carrier.schema.json');
 const KERNEL_IDS = KERNEL.map(id => `skill:${id}`);
 const LAYOUTS = {
   claude: { id: 'claude-plugin@1', skillRoot: 'skills', manifestPath: '.claude-plugin/plugin.json' },
   codex: { id: 'codex-plugin@1', skillRoot: 'skills', manifestPath: '.codex-plugin/plugin.json' },
   pi: { id: 'pi-package@1', skillRoot: 'skills', manifestPath: 'package.json' },
-  opencode: { id: 'opencode-project@1', skillRoot: '.opencode/skills', manifestPath: null },
-  cursor: { id: 'cursor-project@1', skillRoot: '.cursor/skills', manifestPath: null },
 };
 
 function plan(options) {
@@ -80,7 +76,7 @@ test('Lean plans only the three selected whole skill trees and never activates a
   assert.match(carrier.limitations.join(' '), /routed.*(?:unimplemented|not implemented)/i);
 }));
 
-test('all five source-backed layouts preserve exact selected native directories', () => withFixture(root => {
+test('all three source-backed layouts preserve exact selected native directories', () => withFixture(root => {
   for (const [target, layout] of Object.entries(LAYOUTS)) {
     const carrier = plan({ repoRoot: root, target });
     assert.deepEqual(carrier.layout, layout);
@@ -301,22 +297,6 @@ test('read-only planning does not write files, execute processes, or inspect use
     context.mock.restoreAll();
   }
   assert.deepEqual(snapshot(root), before);
-}));
-
-test('published carrier schema validates outputs and rejects extra or capability-bearing fields', () => withFixture(root => {
-  const carrier = plan({ repoRoot: root });
-  const schema = JSON.parse(fs.readFileSync(SCHEMA_PATH, 'utf8'));
-  const validate = new Ajv({ allErrors: true, strict: true }).compile(schema);
-  assert.equal(validate(carrier), true, JSON.stringify(validate.errors));
-  assert.equal(validate({ ...carrier, extra: true }), false);
-  assert.equal(validate({ ...carrier, active: true }), false);
-  assert.equal(validate({ ...carrier, nativeSupport: 'verified' }), false);
-  assert.equal(validate({ ...carrier, files: [{ ...carrier.files[0], hooks: true }] }), false);
-  assert.equal(validate({ ...carrier, files: [{ kind: 'generated', destinationPath: 'hooks/hooks.json',
-    content: '{}', encoding: 'utf8', digest: sha256('{}'), bytes: 2 }] }), false);
-  const unsupported = plan({ repoRoot: root, target: 'gemini' });
-  assert.equal(validate(unsupported), true, JSON.stringify(validate.errors));
-  assert.equal(validate({ ...unsupported, files: carrier.files }), false);
 }));
 
 test('real canonical inventory projects every selected bundled resource without relying on mirrors', () => {

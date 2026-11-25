@@ -157,7 +157,6 @@ Keep it scannable on a phone screen.
 Do **not** write ad-hoc notes to `~/.claude/notes` or other shadow paths from this skill.
 
 If the council materially changes the recommendation:
-- use `knowledge-ops` to store the lesson in the right durable location
 - or use `/save-session` if the outcome belongs in session memory
 - or update the relevant GitHub / Linear issue directly if the decision changes active execution truth
 
@@ -183,7 +182,6 @@ If the user wants another round:
 ## Related Skills
 
 - `santa-method` — adversarial verification
-- `knowledge-ops` — persist durable decision deltas correctly
 - `search-first` — gather external reference material before the council if needed
 - `architecture-decision-records` — formalize the outcome when the decision becomes long-lived system policy
 

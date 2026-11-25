@@ -11,7 +11,6 @@ const {
   MATRIX_BLOCK_START,
   extractMatrixBlock,
   renderMarkdownTable,
-  validateAdapterRecords,
   validateDocumentation,
   validateSourceDocs,
 } = require('../../scripts/lib/harness-adapter-compliance');
@@ -39,68 +38,6 @@ function read(relativePath) {
 }
 
 console.log('\n=== Testing harness adapter compliance docs ===\n');
-
-test('adapter compliance matrix covers the required harness surfaces', () => {
-  const source = read('docs/architecture/harness-adapter-compliance.md');
-  for (const harness of [
-    'Claude Code',
-    'Codex',
-    'Grok Build',
-    'OpenCode',
-    'Pi',
-    'Cursor',
-    'Gemini',
-    'Zed',
-    'dmux',
-    'DeepSeek Harness',
-    'Antigravity',
-    'Qwen Code',
-    'GitHub Copilot',
-    'Hermes',
-    'Orca',
-    'Superset',
-    'Ghast',
-    'Terminal-only'
-  ]) {
-    assert.ok(source.includes(harness), `Expected matrix to include ${harness}`);
-  }
-});
-
-test('shipped first-party install targets are represented as Adapter-backed records', () => {
-  const expectedTargets = [
-    ['antigravity', '`./install.sh --profile minimal --target antigravity`', 'docs/ANTIGRAVITY-GUIDE.md'],
-    ['qwen', '`./install.sh --target qwen --profile minimal`', 'docs/QWEN-GUIDE.md'],
-    ['copilot', '`./install.sh --profile minimal --target copilot`', 'scripts/lib/install-targets/copilot-project.js'],
-    ['hermes', '`./install.sh --profile minimal --target hermes`', 'docs/HERMES-HOOKS.md'],
-  ];
-
-  for (const [id, onramp, sourceDoc] of expectedTargets) {
-    const record = ADAPTER_RECORDS.find(entry => entry.id === id);
-    assert.ok(record, `Expected adapter record for ${id}`);
-    assert.strictEqual(record.state, 'Adapter-backed', `${id} should be Adapter-backed`);
-    assert.ok(record.install_or_onramp.includes(onramp), `${id} should include installer onramp ${onramp}`);
-    assert.ok(record.source_docs.includes(sourceDoc), `${id} should reference ${sourceDoc}`);
-  }
-});
-
-test('adapter compliance source data validates required evidence fields', () => {
-  assert.deepStrictEqual(validateAdapterRecords(), []);
-
-  const zedRecord = ADAPTER_RECORDS.find(record => record.id === 'zed');
-  assert.ok(zedRecord, 'Expected Zed adapter record');
-  assert.strictEqual(zedRecord.state, 'Adapter-backed');
-  assert.ok(
-    zedRecord.install_or_onramp.includes('`./install.sh --profile minimal --target zed`'),
-    'Expected Zed installer onramp'
-  );
-
-  for (const record of ADAPTER_RECORDS) {
-    assert.ok(record.install_or_onramp.length > 0, `${record.id} needs an install or onramp`);
-    assert.ok(record.verification_commands.length > 0, `${record.id} needs verification commands`);
-    assert.ok(record.risk_notes.length > 0, `${record.id} needs risk notes`);
-    assert.ok(record.source_docs.length > 0, `${record.id} needs source docs`);
-  }
-});
 
 test('adapter compliance matrix is generated from source data', () => {
   const source = read('docs/architecture/harness-adapter-compliance.md');

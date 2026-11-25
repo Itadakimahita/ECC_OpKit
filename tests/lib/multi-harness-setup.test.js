@@ -119,22 +119,20 @@ function writeManagedState(plan, overrides = {}) {
 
   await test('normalizes provider-specific options without inventing shared semantics', () => {
     assert.deepStrictEqual(normalizeGuidedInstallRequest({
-      harnesses: ['kimi', 'claude', 'kimi'],
+      harnesses: ['codex', 'claude', 'codex'],
       claudeHooks: 'minimal',
       claudeScope: 'local',
-      profile: 'developer',
     }), {
-      harnesses: ['claude', 'kimi'],
+      harnesses: ['claude', 'codex'],
       claudeHooks: 'minimal',
       claudeScope: 'local',
       dryRun: false,
       json: false,
-      profile: 'developer',
       yes: false,
     });
 
     assert.throws(
-      () => normalizeGuidedInstallRequest({ harnesses: ['kimi'], claudeScope: 'user' }),
+      () => normalizeGuidedInstallRequest({ harnesses: ['codex'], claudeScope: 'user' }),
       /Claude.*selected/i
     );
     assert.throws(
@@ -491,24 +489,21 @@ function writeManagedState(plan, overrides = {}) {
   await test('preflights every selected harness before applying any mutation', async () => {
     const events = [];
     const request = normalizeGuidedInstallRequest({
-      harnesses: ['claude', 'codex', 'kimi'],
+      harnesses: ['claude', 'codex'],
       claudeHooks: 'standard',
       claudeScope: 'user',
-      profile: 'core',
     });
     await assert.rejects(
       () => createMultiHarnessPlan(request, {
         previewClaude: async () => events.push('preview:claude'),
-        previewCodex: async () => events.push('preview:codex'),
-        createManagedPlan: async () => ({ target: 'kimi' }),
-        preflightManaged: async () => {
-          events.push('preview:kimi');
+        previewCodex: async () => {
+          events.push('preview:codex');
           throw new Error('unowned collision');
         },
       }),
       /collision/
     );
-    assert.deepStrictEqual(events, ['preview:claude', 'preview:codex', 'preview:kimi']);
+    assert.deepStrictEqual(events, ['preview:claude', 'preview:codex']);
   });
 
   await test('refuses a copy-file destination created after preview but before apply', async () => {

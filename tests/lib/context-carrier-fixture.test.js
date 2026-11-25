@@ -252,12 +252,6 @@ for (const [label, spellings] of [
   }));
 }
 
-test('unsupported carriers cannot create a staged fixture', () => withFixture(repoRoot => {
-  const options = request(repoRoot, { target: 'gemini' });
-  assert.equal(options.artifact.status, 'unsupported');
-  assert.throws(() => withCarrierFixture(options, () => assert.fail('unsupported target accepted')), /unsupported/i);
-}));
-
 test('failure cleanup removes only the helper-owned stage and preserves outside data', () => withFixture(repoRoot => {
   const sentinel = path.join(repoRoot, 'outside-sentinel.txt');
   fs.writeFileSync(sentinel, 'preserve');

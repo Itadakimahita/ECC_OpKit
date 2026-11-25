@@ -31,15 +31,6 @@ const guardrails = [
     ],
   },
   {
-    path: '.kiro/skills/search-first/SKILL.md',
-    heading: '## Scope and Approval Rules',
-    requiredPatterns: [
-      /Default to read-only research/i,
-      /Do not install packages/i,
-      /approval checkpoint/i,
-    ],
-  },
-  {
     path: '.agents/skills/frontend-patterns/SKILL.md',
     heading: '## Privacy and Data Boundaries',
     requiredPatterns: [

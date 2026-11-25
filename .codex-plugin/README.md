@@ -13,7 +13,7 @@ hooks/codex-hooks.json — Codex-compatible lifecycle hook projection
 
 ## What This Provides
 
-- **281 skills** from `./skills/` — reusable Codex workflows for TDD, security,
+- **138 skills** from `./skills/` — reusable Codex workflows for TDD, security,
   code review, architecture, and more
 - **1 default MCP server** — Chrome DevTools; retired connectors remain opt-in
 - **Codex lifecycle hooks** — synchronous command hooks on supported events,

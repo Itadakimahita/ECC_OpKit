@@ -774,12 +774,12 @@ test('benchmark optimization is discoverable and loads through task context rout
 
 for (const [query, automatic] of [
   ['turn user goal into benchmark', false],
-  // OpKit trim: with the smaller catalog these two phrases fall below the auto margin and go to the agent.
+  // OpKit trim: with the smaller catalog this phrase falls below the auto margin and goes to the agent.
   ['optimize task completion rate', false],
   ['compare implementation variants', false],
   ['improve correctness with fixed evaluation', true],
   ['reduce cost per resolved task', true],
-  ['run bounded recursive optimization', false],
+  ['run bounded recursive optimization', true],
   ['verify improvement on independent cases', true],
   ['keep best measured admissible result', true],
 ]) {
