@@ -21,7 +21,6 @@ Agent(subagent_type: "ecc:planner", prompt: "...")
 | ecc:refactor-cleaner | Dead code cleanup | Code maintenance |
 | ecc:doc-updater | Documentation | Updating docs |
 | ecc:rust-reviewer | Rust code review | Rust projects |
-| ecc:harmonyos-app-resolver | HarmonyOS app development | HarmonyOS/ArkTS projects |
 
 For the full roster of 69 agents, see `/ecc:ecc-guide`.
 

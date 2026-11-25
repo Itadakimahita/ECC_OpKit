@@ -16,17 +16,9 @@ rules/
 │   ├── agents.md
 │   └── security.md
 ├── typescript/      # TypeScript/JavaScript specific
-├── angular/         # Angular specific
-├── vue/             # Vue 3 specific
-├── nuxt/            # Nuxt 4 specific
 ├── python/          # Python specific
 ├── golang/          # Go specific
-├── web/             # Web and frontend specific
-├── react-native/    # React Native / Expo specific
-├── swift/           # Swift specific
-├── php/             # PHP specific
-├── ruby/            # Ruby / Rails specific
-└── arkts/           # HarmonyOS / ArkTS specific
+└── web/             # Web and frontend specific
 ```
 
 - **common/** contains universal principles — no language-specific code examples.
@@ -39,17 +31,9 @@ rules/
 ```bash
 # Install common + one or more language-specific rule sets
 ./install.sh typescript
-./install.sh angular
-./install.sh vue
-./install.sh nuxt
 ./install.sh python
 ./install.sh golang
 ./install.sh web
-./install.sh react-native
-./install.sh swift
-./install.sh php
-./install.sh ruby
-./install.sh arkts
 
 # Install multiple languages at once
 ./install.sh typescript python
@@ -76,17 +60,9 @@ cp -r rules/common ~/.claude/rules/ecc/
 
 # Install language-specific rules based on your project's tech stack
 cp -r rules/typescript ~/.claude/rules/ecc/
-cp -r rules/angular ~/.claude/rules/ecc/
-cp -r rules/vue ~/.claude/rules/ecc/
-cp -r rules/nuxt ~/.claude/rules/ecc/
 cp -r rules/python ~/.claude/rules/ecc/
 cp -r rules/golang ~/.claude/rules/ecc/
 cp -r rules/web ~/.claude/rules/ecc/
-cp -r rules/react-native ~/.claude/rules/ecc/
-cp -r rules/swift ~/.claude/rules/ecc/
-cp -r rules/php ~/.claude/rules/ecc/
-cp -r rules/ruby ~/.claude/rules/ecc/
-cp -r rules/arkts ~/.claude/rules/ecc/
 
 # Attention ! ! ! Configure according to your actual project requirements; the configuration here is for reference only.
 ```
@@ -130,7 +106,7 @@ For non-language domains like `web/`, follow the same layered pattern when there
 When language-specific rules and common rules conflict, **language-specific rules take precedence** (specific overrides general). This follows the standard layered configuration pattern (similar to CSS specificity or `.gitignore` precedence).
 
 - `rules/common/` defines universal defaults applicable to all projects.
-- `rules/golang/`, `rules/python/`, `rules/swift/`, `rules/php/`, `rules/typescript/`, `rules/react-native/`, etc. override those defaults where language idioms differ.
+- `rules/golang/`, `rules/python/`, `rules/rust/`, `rules/typescript/`, `rules/react/`, etc. override those defaults where language idioms differ.
 
 ### Example
 
